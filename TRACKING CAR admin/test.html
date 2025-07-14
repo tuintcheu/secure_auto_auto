@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Firestore</title>
+</head>
+<body>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Mets ici ta config Firebase exacte :
+    const firebaseConfig = {
+    apiKey: "AIzaSyAOS5eDHnRXGXn4QpkOqm3z0kcChSlU0Ho",
+    authDomain: "securauto-19756.firebaseapp.com",
+    projectId: "securauto-19756",
+    storageBucket: "securauto-19756.appspot.com",
+    messagingSenderId: "42127478765",
+    appId: "1:42127478765:web:7800e4c81932e9af4561e4",
+    measurementId: "G-3Q2KNVXZPS"
+};
+    initializeApp(firebaseConfig);
+
+    const db = getFirestore();
+    getDocs(collection(db, 'stolen_vehicles')).then(snap => {
+      console.log("Nb véhicules:", snap.size, snap.docs.map(d=>d.data()));
+      alert("Nb véhicules: " + snap.size);
+    });
+  </script>
+</body>
+</html>

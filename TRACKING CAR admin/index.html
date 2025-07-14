@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Connexion Administration</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .halo {
+            box-shadow: 0 0 0 8px rgba(59,130,246,0.15), 0 4px 32px 0 rgba(49,46,129,0.15);
+        }
+        .input-anim:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #6366f1;
+            border-color: #6366f1;
+        }
+        .fade-in {
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOS5eDHnRXGXn4QpkOqm3z0kcChSlU0Ho",
+            authDomain: "securauto-19756.firebaseapp.com",
+            projectId: "securauto-19756",
+            storageBucket: "securauto-19756.appspot.com",
+            messagingSenderId: "42127478765",
+            appId: "1:42127478765:web:7800e4c81932e9af4561e4",
+            measurementId: "G-3Q2KNVXZPS"
+        };
+        const app = initializeApp(firebaseConfig);
+        window.firebaseApp = app;
+        window.firebaseAuth = getAuth(app);
+        window.firebaseDb = getFirestore(app);
+        console.log("✅ Firebase initialisé avec succès");
+    </script>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Halo d'arrière-plan -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div class="absolute w-96 h-96 bg-blue-600 opacity-30 rounded-full blur-3xl -top-32 -left-32 animate-pulse"></div>
+        <div class="absolute w-80 h-80 bg-indigo-500 opacity-20 rounded-full blur-2xl -bottom-24 right-10 animate-pulse"></div>
+    </div>
+    <main class="w-full min-h-screen flex items-center justify-center z-10">
+        <div class="glass max-w-md w-full p-10 relative fade-in shadow-2xl">
+            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                <div class="h-28 w-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg border-4 border-white halo">
+                    <i class="fas fa-shield-alt text-white text-5xl"></i>
+                </div>
+            </div>
+            <div class="text-center mt-16 mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight drop-shadow">TRACKING CAR</h1>
+                <p class="text-lg text-blue-700 font-semibold mt-2">Espace Administration</p>
+                <p class="text-sm text-gray-400 mt-1">Connectez-vous pour accéder au tableau de bord</p>
+            </div>
+            <form id="loginForm" class="space-y-7">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input id="adminEmail" type="email" required autocomplete="username"
+                            class="input-anim w-full border border-gray-200 pl-10 pr-3 py-2.5 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900 bg-white/80 placeholder-gray-400 shadow-sm"
+                            placeholder="admin@email.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input id="adminPassword" type="password" required autocomplete="current-password"
+                            class="input-anim w-full border border-gray-200 pl-10 pr-3 py-2.5 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900 bg-white/80 placeholder-gray-400 shadow-sm"
+                            placeholder="Votre mot de passe">
+                    </div>
+                </div>
+                <div id="loginMessage" class="hidden px-4 py-3 rounded-lg text-sm text-center mt-2 transition-all duration-300"></div>
+                <button id="loginSubmit" type="submit"
+                    class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 transition-all text-lg flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Se connecter
+                </button>
+            </form>
+            <div class="mt-10 text-center text-xs text-gray-400">
+                &copy; 2025 TRACKING CAR. Tous droits réservés.
+            </div>
+        </div>
+    </main>
+    <script type="module" src="assets/js/auth.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const email = document.getElementById("adminEmail").value.trim();
+            const password = document.getElementById("adminPassword").value.trim();
+            const messageElement = document.getElementById("loginMessage");
+            const submitButton = document.getElementById("loginSubmit");
+            submitButton.disabled = true;
+            const result = await window.trackingCarAuth.handleLogin(email, password);
+            if (result.success) {
+                messageElement.textContent = "✅ Connexion réussie !";
+                messageElement.classList.remove("bg-red-100", "text-red-800");
+                messageElement.classList.add("bg-green-100", "text-green-800", "fade-in");
+                setTimeout(() => window.location.href = "dashboard.html", 1200);
+            } else {
+                messageElement.textContent = result.message;
+                messageElement.classList.remove("bg-green-100", "text-green-800");
+                messageElement.classList.add("bg-red-100", "text-red-800", "fade-in");
+                submitButton.disabled = false;
+            }
+            messageElement.classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

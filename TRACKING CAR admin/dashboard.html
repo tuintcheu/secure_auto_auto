@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Tableau de bord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Compacte les graphiques */
+        #detectionsChart, #legionChart {
+            height: 170px !important;
+            max-height: 170px;
+        }
+        .chart-container {
+            height: 240px;
+            max-height: 240px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center ml-2">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                   <!-- Notifications -->
+<div class="relative ml-4">
+  <button id="notificationBell" class="relative focus:outline-none">
+    <i class="fas fa-bell text-2xl"></i>
+    <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5 hidden"></span>
+  </button>
+  <!-- Panneau notifications -->
+  <div id="notificationsPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg z-50 border border-gray-200">
+    <div class="p-4 border-b font-bold text-gray-700 flex items-center">
+      <i class="fas fa-bell mr-2 text-blue-600"></i> Notifications récentes
+    </div>
+    <ul id="notificationsList" class="max-h-80 overflow-y-auto divide-y"></ul>
+    <div class="p-2 text-xs text-gray-400 text-center">Fin des notifications</div>
+  </div>
+</div>
+                    <!-- User menu -->
+                    <div class="relative">
+                        <a href="profile.html">
+                            <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
+                                    <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400"></i>
+                            </button>
+                        </a>
+                        <!-- Dropdown menu -->
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                            <div class="px-4 py-2 border-b border-gray-200">
+                                <div id="userLegion" class="text-sm text-gray-600">Légion</div>
+                            </div>
+                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
+        <nav class="mt-6 px-4">
+            <div class="space-y-2">
+                <a href="dashboard.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Tableau de bord
+                </a>
+                <a href="vehicles/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-car mr-3 text-lg"></i>
+                    Véhicules volés
+                </a>
+                <a href="detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-search mr-3 text-lg"></i>
+                    Détections mobiles
+                </a>
+                <a href="users/list.html" id="users-menu" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Utilisateurs app
+                </a>
+                <a href="users/admins.html" id="admin-management" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-user-shield mr-3 text-lg"></i>
+                    Admins légions
+                </a>
+                <a href="rewards/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-gift mr-3 text-lg"></i>
+                    Récompenses
+                </a>
+                <a href="logs/activity.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-history mr-3 text-lg"></i>
+                    Logs d'activité
+                </a>
+                <a href="settings/system.html" id="system-settings" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-cog mr-3 text-lg"></i>
+                    Paramètres
+                </a>
+            </div>
+        </nav>
+        <!-- Footer sidebar -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+            <div class="text-xs text-gray-500 text-center">
+                TRACKING CAR v1.0<br>
+                Gendarmerie Nationale
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6">
+            <!-- Header section -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Tableau de bord</h1>
+                <p class="text-gray-600">Vue d'ensemble des activités TRACKING CAR</p>
+            </div>
+
+            <!-- Stats overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total véhicules volés -->
+                <div class="stat-card fade-in">
+                    <div class="flex items-center">
+                        <div class="stat-icon bg-red-100 text-red-600">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div id="totalVehicles" class="stat-number">-</div>
+                            <div class="stat-label">Véhicules volés</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Détections aujourd'hui -->
+                <div class="stat-card slide-in-right" style="animation-delay: 0.1s">
+                    <div class="flex items-center">
+                        <div class="stat-icon bg-blue-100 text-blue-600">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div id="todayDetections" class="stat-number">-</div>
+                            <div class="stat-label">Détections aujourd'hui</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Utilisateurs actifs -->
+                <div class="stat-card slide-in-right" style="animation-delay: 0.2s">
+                    <div class="flex items-center">
+                        <div class="stat-icon bg-green-100 text-green-600">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div id="activeUsers" class="stat-number">-</div>
+                            <div class="stat-label">Utilisateurs actifs</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Récompenses en attente -->
+                <div class="stat-card slide-in-right" style="animation-delay: 0.3s">
+                    <div class="flex items-center">
+                        <div class="stat-icon bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div id="pendingRewards" class="stat-number">-</div>
+                            <div class="stat-label">Récompenses en attente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and activity section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Graphique des détections -->
+                <div class="chart-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-lg font-bold">Détections par mois</h2>
+                        <button id="exportDetectionsExcel" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2">
+                            <i class="fas fa-file-excel"></i> Exporter en Excel
+                        </button>
+                    </div>
+                    <canvas id="detectionsChart"></canvas>
+                </div>
+                <!-- Répartition par légion -->
+                <div class="chart-container bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Véhicules par légion</h3>
+                    <canvas id="legionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent activity and quick actions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Activité récente -->
+                <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Activité récente</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="recentActivity" class="space-y-4">
+                            <div class="text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mb-2"></i>
+                                <p>Chargement de l'activité récente...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Actions rapides -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions rapides</h3>
+                    <div class="space-y-3">
+                        <a href="vehicles/add.html" class="btn btn-primary w-full text-left">
+                            <i class="fas fa-plus mr-2"></i>
+                            Nouveau véhicule volé
+                        </a>
+                        <a href="detections/list.html" class="btn btn-secondary w-full text-left">
+                            <i class="fas fa-search mr-2"></i>
+                            Voir les détections
+                        </a>
+                        <a href="rewards/list.html" class="btn btn-warning w-full text-left">
+                            <i class="fas fa-gift mr-2"></i>
+                            Gérer récompenses
+                        </a>
+                        <!-- <a href="reports/dashboard.html" class="btn btn-success w-full text-left">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Rapports détaillés
+                        </a> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertes et notifications importantes -->
+            <div id="alertsSection" class="mt-8 hidden">
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Alertes importantes</h3>
+                            <div id="alertsList" class="mt-2 text-sm text-red-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading overlay unique -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center">
+            <i class="fas fa-spinner fa-spin text-blue-600 text-xl mr-3"></i>
+            <span>Chargement des données...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="assets/js/firebase-config.js"></script>
+    <script type="module" src="assets/js/auth.js"></script>
+    <script type="module" src="assets/js/utils.js"></script>
+    <script type="module" src="assets/js/vehicles.js"></script>
+    <script type="module" src="assets/js/dashboard.js"></script>
+</body>
+</html>

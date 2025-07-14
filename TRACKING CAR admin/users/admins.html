@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Gestion des administrateurs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center ml-2">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
+                                <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
+                            </div>
+                        </button>
+                        
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                            <a href="../profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user-circle mr-2"></i>Mon profil
+                            </a>
+                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
+        <nav class="mt-6 px-4">
+            <div class="space-y-2">
+                <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Tableau de bord
+                </a>
+                
+                <a href="../vehicles/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-car mr-3 text-lg"></i>
+                    Véhicules volés
+                </a>
+                
+                <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-search mr-3 text-lg"></i>
+                    Détections mobiles
+                </a>
+                
+                <a href="list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Utilisateurs app
+                </a>
+                
+                <a href="admins.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                    <i class="fas fa-user-shield mr-3 text-lg"></i>
+                    Admins légions
+                </a>
+                
+                <a href="../rewards/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-gift mr-3 text-lg"></i>
+                    Récompenses
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6">
+            <!-- Header avec restrictions -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestion des administrateurs</h1>
+                <p class="text-gray-600">Administration des comptes administrateurs TRACKING CAR</p>
+                
+                <!-- Message de restriction si pas admin global -->
+                <div id="restrictionMessage" class="hidden mt-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-triangle mr-2 mt-0.5"></i>
+                        <div>
+                            <strong>Accès restreint :</strong> Vous n'avez pas les permissions pour gérer les administrateurs.
+                            Seul l'administrateur global peut accéder à cette section.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats pour admin global -->
+                <div id="adminStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-user-shield text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div id="totalAdmins" class="text-xl font-bold text-gray-900">-</div>
+                                <div class="text-sm text-gray-500">Total admins</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-user-check text-green-600"></i>
+                            </div>
+                            <div>
+                                <div id="activeAdmins" class="text-xl font-bold text-green-600">-</div>
+                                <div class="text-sm text-gray-500">Actifs</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-crown text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div id="globalAdmins" class="text-xl font-bold text-purple-600">-</div>
+                                <div class="text-sm text-gray-500">Globaux</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-map-marker-alt text-orange-600"></i>
+                            </div>
+                            <div>
+                                <div id="legionAdmins" class="text-xl font-bold text-orange-600">-</div>
+                                <div class="text-sm text-gray-500">Légions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions et filtres -->
+            <div id="adminManagement" class="space-y-6">
+                <!-- Actions rapides -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Actions administrateur</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="addAdminBtn" class="btn btn-primary">
+                                <i class="fas fa-plus mr-2"></i>Nouvel administrateur
+                            </button>
+                            <button id="inviteAdminBtn" class="btn btn-secondary">
+                                <i class="fas fa-envelope mr-2"></i>Invitation par email
+                            </button>
+                            <button id="exportAdminsBtn" class="btn bg-gray-600 text-white hover:bg-gray-700">
+                                <i class="fas fa-download mr-2"></i>Exporter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtres -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="form-label">Recherche</label>
+                            <input id="searchInput" type="text" class="form-input" placeholder="Nom, email...">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Rôle</label>
+                            <select id="roleFilter" class="form-input form-select">
+                                <option value="">Tous les rôles</option>
+                                <option value="global_admin">Administrateur Global</option>
+                                <option value="legion_admin">Administrateur de Légion</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Légion</label>
+                            <select id="legionFilter" class="form-input form-select">
+                                <option value="">Toutes les légions</option>
+                                <!-- Les légions seront chargées dynamiquement -->
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Statut</label>
+                            <select id="statusFilter" class="form-input form-select">
+                                <option value="">Tous les statuts</option>
+                                <option value="active">Actifs</option>
+                                <option value="inactive">Inactifs</option>
+                                <option value="pending">En attente</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex justify-between items-center">
+                        <button id="clearFiltersBtn" class="text-sm text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-times mr-1"></i>Effacer les filtres
+                        </button>
+                        <div id="resultsCount" class="text-sm text-gray-600">
+                            - administrateurs trouvés
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liste des administrateurs -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Administrateurs système</h3>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="adminsList" class="space-y-4">
+                            <!-- Loading state -->
+                            <div id="loadingState" class="text-center py-8">
+                                <i class="fas fa-spinner fa-spin text-2xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-500">Chargement des administrateurs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal d'ajout d'administrateur -->
+    <div id="addAdminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Nouvel administrateur</h3>
+                    <button id="closeAddAdminModalBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="addAdminForm" class="p-6 space-y-6">
+                <!-- Informations de base -->
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Informations personnelles</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">Nom complet *</label>
+                            <input type="text" id="adminDisplayName" name="displayName" required class="form-input" placeholder="Nom et prénom">
+                        </div>
+                        <div>
+                            <label class="form-label">Email *</label>
+                            <input type="email" id="adminEmail" name="email" required class="form-input" placeholder="admin@gendarmerie.cm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rôle et permissions -->
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Rôle et permissions</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="form-label">Rôle administrateur *</label>
+                            <select id="adminRole" name="role" required class="form-input form-select">
+                                <option value="">Sélectionner un rôle</option>
+                                <option value="global_admin">Administrateur Global</option>
+                                <option value="legion_admin">Administrateur de Légion</option>
+                            </select>
+                        </div>
+                        
+                        <div id="legionSelection" class="hidden">
+                            <label class="form-label">Légion responsable *</label>
+                            <select id="adminLegion" name="legion" class="form-input form-select">
+                                <option value="">Sélectionner une légion</option>
+                                <!-- Les légions seront chargées dynamiquement -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Accès initial</h4>
+                    <div>
+                        <label class="form-label">Mot de passe temporaire *</label>
+                        <input type="password" id="adminPassword" name="password" required class="form-input" minlength="8" placeholder="Minimum 8 caractères">
+                        <small class="text-gray-500">L'administrateur devra changer ce mot de passe lors de sa première connexion</small>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button type="button" id="cancelAddAdminBtn" class="btn btn-secondary">Annuler</button>
+                    <button type="submit" id="createAdminBtn" class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-2"></i>Créer l'administrateur
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal d'édition d'administrateur -->
+    <div id="editAdminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Modifier l'administrateur</h3>
+                    <button id="closeEditAdminModalBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="editAdminContent" class="p-6">
+                <!-- Le contenu sera chargé dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+    <script type="module" src="../assets/js/utils.js"></script>
+    <script  type="module" src="../assets/js/admins.js"></script>
+</body>
+</html>

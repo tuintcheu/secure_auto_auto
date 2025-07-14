@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Véhicules volés</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header (même structure que dashboard) -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center ml-2">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
+                                <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
+                            </div>
+                        </button>
+                        
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar (même structure) -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
+        <nav class="mt-6 px-4">
+            <div class="space-y-2">
+                <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Tableau de bord
+                </a>
+                
+                <a href="list.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                    <i class="fas fa-car mr-3 text-lg"></i>
+                    Véhicules volés
+                </a>
+                
+                <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-search mr-3 text-lg"></i>
+                    Détections mobiles
+                </a>
+                
+                <a href="../users/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Utilisateurs app
+                </a>
+                
+                <a href="../rewards/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-gift mr-3 text-lg"></i>
+                    Récompenses
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6">
+            <!-- Header avec actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Véhicules volés</h1>
+                    <p class="text-gray-600">Gestion de la base de données des véhicules signalés</p>
+                </div>
+                
+                <div class="mt-4 sm:mt-0 flex space-x-3">
+                    <button id="exportBtn" class="btn btn-secondary">
+                        <i class="fas fa-download mr-2"></i>Exporter
+                    </button>
+                    <a href="add.html" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Nouveau véhicule
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filtres et recherche -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="form-label">Recherche</label>
+                        <input id="searchInput" type="text" class="form-input" placeholder="Plaque, châssis, marque...">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Statut</label>
+                        <select id="statusFilter" class="form-input form-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="active">Recherché</option>
+                            <option value="recovered">Récupéré</option>
+                            <option value="closed">Dossier fermé</option>
+                        </select>
+                    </div>
+                    
+                    <div id="legionFilterContainer" class="hidden">
+                        <label class="form-label">Légion</label>
+                        <select id="legionFilter" class="form-input form-select">
+                            <option value="">Toutes les légions</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Période</label>
+                        <select id="periodFilter" class="form-input form-select">
+                            <option value="">Toutes les périodes</option>
+                            <option value="7">7 derniers jours</option>
+                            <option value="30">30 derniers jours</option>
+                            <option value="90">3 derniers mois</option>
+                            <option value="365">Cette année</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex justify-between items-center">
+                    <button id="clearFiltersBtn" class="text-sm text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-times mr-1"></i>Effacer les filtres
+                    </button>
+                    <div id="resultsCount" class="text-sm text-gray-600">
+                        - véhicules trouvés
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des véhicules -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Liste des véhicules</h3>
+                </div>
+                
+                <div class="p-6">
+                    <div id="vehiclesList" class="space-y-4">
+                        <!-- Loading state -->
+                        <div id="loadingState" style="display:none;">
+                          <div class="text-center py-8">
+                            <i class="fas fa-spinner fa-spin text-2xl text-blue-600 mb-2"></i>
+                            <p>Chargement des véhicules...</p>
+                          </div>
+                        </div>
+                        <div id="emptyState" style="display:none;">
+                          <div class="text-center py-8">
+                            <i class="fas fa-car-slash text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">Aucun véhicule trouvé</p>
+                          </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div id="pagination" class="hidden mt-6 flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Affichage de <span id="pageStart">1</span> à <span id="pageEnd">10</span> sur <span id="totalItems">0</span> véhicules
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPageBtn" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i>Précédent
+                            </button>
+                            <div id="pageNumbers" class="flex space-x-1">
+                                <!-- Page numbers will be inserted here -->
+                            </div>
+                            <button id="nextPageBtn" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">
+                                Suivant<i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de détails véhicule -->
+    <div id="vehicleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Détails du véhicule</h3>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="modalContent" class="p-6">
+                <!-- Vehicle details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+  <script type="module" src="../assets/js/firebase-config.js"></script>
+<script type="module" src="../assets/js/auth.js"></script>
+<script type="module" src="../assets/js/utils.js"></script>
+<script type="module" src="../assets/js/vehicles.js"></script>
+<!-- <script type="module" src="../assets/js/dashboard.js"></script> -->
+</body>
+</html>

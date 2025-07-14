@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Gestion des récompenses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center ml-2">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button id="notificationsBtn" class="p-2 text-gray-600 hover:text-gray-900 relative">
+                            <i class="fas fa-bell"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+                        </button>
+                        
+                        <!-- Dropdown notifications -->
+                        <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="font-semibold text-gray-900">Notifications</h3>
+                            </div>
+                            <div id="notificationsList" class="p-4">
+                                <div class="text-center text-gray-500 text-sm">Aucune notification</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
+                                <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
+                            </div>
+                        </button>
+                        
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user-circle mr-2"></i>Mon profil
+                            </a>
+                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
+        <nav class="mt-6 px-4">
+            <div class="space-y-2">
+                <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Tableau de bord
+                </a>
+                
+                <a href="../vehicles/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-car mr-3 text-lg"></i>
+                    Véhicules volés
+                </a>
+                
+                <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-search mr-3 text-lg"></i>
+                    Détections mobiles
+                </a>
+                
+                <a href="../users/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Utilisateurs app
+                </a>
+                
+                <a href="list.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                    <i class="fas fa-gift mr-3 text-lg"></i>
+                    Récompenses
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6">
+            <!-- Header avec stats -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestion des récompenses</h1>
+                <p class="text-gray-600">Traitement et paiement des récompenses pour détections de véhicules volés</p>
+                
+                <!-- Stats rapides -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-clock text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <div id="pendingRewards" class="text-xl font-bold text-yellow-600">-</div>
+                                <div class="text-sm text-gray-500">En attente</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-thumbs-up text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div id="approvedRewards" class="text-xl font-bold text-blue-600">-</div>
+                                <div class="text-sm text-gray-500">Approuvées</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-money-bill-wave text-green-600"></i>
+                            </div>
+                            <div>
+                                <div id="paidRewards" class="text-xl font-bold text-green-600">-</div>
+                                <div class="text-sm text-gray-500">Payées</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-calculator text-gray-600"></i>
+                            </div>
+                            <div>
+                                <div id="totalAmount" class="text-xl font-bold text-gray-900">-</div>
+                                <div class="text-sm text-gray-500">Montant total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <button id="processMultipleBtn" class="bg-blue-600 text-white rounded-lg p-4 hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-tasks text-xl mb-2"></i>
+                    <div class="font-semibold">Traitement par lot</div>
+                    <div class="text-sm opacity-90">Approuver plusieurs récompenses</div>
+                </button>
+                
+                <button id="generateReportBtn" class="bg-green-600 text-white rounded-lg p-4 hover:bg-green-700 transition-colors">
+                    <i class="fas fa-file-invoice-dollar text-xl mb-2"></i>
+                    <div class="font-semibold">Rapport financier</div>
+                    <div class="text-sm opacity-90">Export pour comptabilité</div>
+                </button>
+                
+                <button id="paymentHistoryBtn" class="bg-purple-600 text-white rounded-lg p-4 hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-history text-xl mb-2"></i>
+                    <div class="font-semibold">Historique paiements</div>
+                    <div class="text-sm opacity-90">Voir tous les paiements</div>
+                </button>
+            </div>
+
+            <!-- Filtres -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div>
+                        <label class="form-label">Recherche détecteur</label>
+                        <input id="searchInput" type="text" class="form-input" placeholder="Nom, email...">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Statut</label>
+                        <select id="statusFilter" class="form-input form-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending">En attente</option>
+                            <option value="approved">Approuvée</option>
+                            <option value="paid">Payée</option>
+                            <option value="rejected">Rejetée</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Montant</label>
+                        <select id="amountFilter" class="form-input form-select">
+                            <option value="">Tous les montants</option>
+                            <option value="0-25000">0 - 25 000 FCFA</option>
+                            <option value="25000-50000">25 000 - 50 000 FCFA</option>
+                            <option value="50000-100000">50 000 - 100 000 FCFA</option>
+                            <option value="100000+">100 000+ FCFA</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Période</label>
+                        <select id="periodFilter" class="form-input form-select">
+                            <option value="">Toutes les périodes</option>
+                            <option value="today">Aujourd'hui</option>
+                            <option value="week">7 derniers jours</option>
+                            <option value="month">30 derniers jours</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-end">
+                        <button id="exportRewardsBtn" class="btn btn-secondary w-full">
+                            <i class="fas fa-download mr-2"></i>Exporter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des récompenses -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">Liste des récompenses</h3>
+                        <div class="flex space-x-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" id="selectAll" class="form-checkbox">
+                                <span class="ml-2 text-sm">Tout sélectionner</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div id="rewardsList" class="space-y-4">
+                        <!-- Loading state -->
+                        <div id="loadingState" class="text-center py-8">
+                            <i class="fas fa-spinner fa-spin text-2xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500">Chargement des récompenses...</p>
+                        </div>
+                        
+                        <!-- Empty state -->
+                        <div id="emptyState" class="hidden text-center py-8">
+                            <i class="fas fa-gift text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">Aucune récompense trouvée</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions de groupe -->
+                    <div id="groupActions" class="hidden mt-6 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-blue-800">
+                                <span id="selectedCount">0</span> récompense(s) sélectionnée(s)
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="approveSelectedBtn" class="btn btn-success text-sm">
+                                    <i class="fas fa-check mr-1"></i>Approuver
+                                </button>
+                                <button id="rejectSelectedBtn" class="btn btn-error text-sm">
+                                    <i class="fas fa-times mr-1"></i>Rejeter
+                                </button>
+                                <button id="markPaidSelectedBtn" class="btn btn-primary text-sm">
+                                    <i class="fas fa-money-bill-wave mr-1"></i>Marquer payées
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div id="pagination" class="hidden mt-6 flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Affichage de <span id="pageStart">1</span> à <span id="pageEnd">10</span> sur <span id="totalItems">0</span> récompenses
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPageBtn" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i>Précédent
+                            </button>
+                            <div id="pageNumbers" class="flex space-x-1"></div>
+                            <button id="nextPageBtn" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">
+                                Suivant<i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de traitement de récompense -->
+    <div id="rewardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Traitement de la récompense</h3>
+                    <button id="closeRewardModalBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="rewardModalContent" class="p-6"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+    <script type="module" src="../assets/js/utils.js"></script>
+    <script type="module" src="../assets/js/notifications.js"></script>
+    <script type="module" src="../assets/js/rewards.js"></script>
+</body>
+</html>
