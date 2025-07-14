@@ -610,65 +610,79 @@ class DetectionsManager {
         window.location.href = `../rewards/list.html?detection=${detectionId}`;
     }
 
-    async exportDetections() {
-        try {
-            TrackingCarUtils.showLoading(true, 'Préparation de l\'export...');
-
-            const dataToExport = this.filteredDetections.map(detection => {
-                const isStolen = detection.result === 'stolen';
-                return {
-                    'Date': TrackingCarUtils.formatDate(detection.timestamp, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                    'Détecteur': detection.user_name || 'N/A',
-                    'Email': detection.user_email || 'N/A',
-                    'Type vérification': detection.chassis_number ? 'Châssis' : 'Plaque',
-                    'Valeur vérifiée': detection.chassis_number || detection.license_plate || 'N/A',
-                    'Résultat': isStolen ? 'VÉHICULE VOLÉ' : 'VÉHICULE PROPRE',
-                    'Latitude': detection.location?.latitude || '',
-                    'Longitude': detection.location?.longitude || '',
-                    'Plateforme': detection.device_info?.platform || 'N/A',
-                    'Photo disponible': detection.selfie_url ? 'Oui' : 'Non',
-                    'Marque véhicule volé': isStolen ? (detection.vehicleDetails?.make || 'N/A') : '',
-                    'Modèle véhicule volé': isStolen ? (detection.vehicleDetails?.model || 'N/A') : ''
-                };
-            });
-
-            const csvContent = this.convertToCSV(dataToExport);
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `detections_tracking_car_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            TrackingCarUtils.showNotification('Export réalisé avec succès', 'success');
-        } catch (error) {
-            console.error('Erreur export:', error);
-            TrackingCarUtils.showNotification('Erreur lors de l\'export', 'error');
-        } finally {
-            TrackingCarUtils.showLoading(false);
+    exportData() {
+        // Génère le CSV à partir des véhicules filtrés
+        const detections = this.filteredDetections || [];
+        if (detections.length === 0) {
+            alert("Aucune donnée à exporter !");
+            return;
         }
-    }
-
-    convertToCSV(data) {
-        if (data.length === 0) return '';
-
-        const headers = Object.keys(data[0]);
-        const csvRows = [];
-
-        csvRows.push(headers.join(','));
-
-        for (const row of data) {
-            const values = headers.map(header => {
-                const value = row[header] || '';
-                return `"${value.toString().replace(/"/g, '""')}"`;
-            });
-            csvRows.push(values.join(','));
-        }
-
-        return csvRows.join('\n');
+        // Colonnes utiles
+        const headers = [
+            "Date",
+            "Détecteur",
+            "Email",
+            "Type",
+            "Valeur",
+            "Résultat",
+            "Marque",
+            "Modèle",
+            "Couleur",
+            "Lieu du vol",
+            "Légion",
+            "Plateforme"
+        ];
+        const legionMap = window.TrackingCarConfig?.LEGIONS || {};
+        const rows = detections.map(d => {
+            // Date
+            let date = '';
+            if (d.timestamp && typeof d.timestamp.toDate === 'function') {
+                const dt = d.timestamp.toDate();
+                date = dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            } else if (d.timestamp instanceof Date) {
+                date = d.timestamp.toLocaleDateString('fr-FR') + ' ' + d.timestamp.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            }
+            // Détecteur
+            const detector = d.user_name || '';
+            // Email
+            const email = d.user_email || '';
+            // Type & Valeur
+            let type = '', valeur = '';
+            if (d.chassis_number) {
+                type = 'Châssis';
+                valeur = d.chassis_number;
+            } else if (d.license_plate) {
+                type = 'Plaque';
+                valeur = d.license_plate;
+            }
+            // Résultat
+            let resultat = d.result === 'stolen' ? 'VÉHICULE VOLÉ' : 'VÉHICULE PROPRE';
+            // Marque, Modèle, Couleur, Lieu du vol, Légion
+            let marque = '', modele = '', couleur = '', lieu = '', legion = '', plateforme = '';
+            if (d.result === 'stolen' && d.result_data && d.result_data.vehicleDetails) {
+                const v = d.result_data.vehicleDetails;
+                marque = v.make || '';
+                modele = v.model || '';
+                couleur = v.color || '';
+                lieu = v.theft_location || '';
+                legion = legionMap[v.legion]?.name || v.legion || '';
+            }
+            plateforme = d.device_info?.platform || '';
+            // Échapper les valeurs
+            const escape = val => '"' + String(val ?? '').replace(/"/g, '""') + '"';
+            return [date, detector, email, type, valeur, resultat, marque, modele, couleur, lieu, legion, plateforme].map(escape).join(';');
+        });
+        // Ajoute le BOM UTF-8 pour Excel
+        const csv = '\uFEFF' + [headers.join(';'), ...rows].join('\n');
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "detections_tracking_car_" + new Date().toISOString().slice(0,10) + ".csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 }
 

@@ -70,6 +70,21 @@ class _CheckScreenState extends State<CheckScreen> with SingleTickerProviderStat
   // Écouteur d'authentification
   StreamSubscription<User?>? _authStateSubscription;
 
+  // Mapping code légion -> nom
+  final Map<String, String> _legionNames = {
+    'l1': 'CENTRE',
+    'l2': 'LITTORAL',
+    'l3': 'OUEST',
+    'l4': 'SUD',
+    'l5': 'NORD',
+    'l6': 'ADAMAOUA',
+    'l7': 'EST',
+    'l8': 'EXTREME-NORD',
+    'l9': 'NORD-OUEST',
+    'l10': 'SUD-OUEST',
+    'l11': 'Logone-et-Chari (Far North)',
+  };
+
   @override
   void initState() {
     super.initState();
@@ -1142,78 +1157,61 @@ class _CheckScreenState extends State<CheckScreen> with SingleTickerProviderStat
                             begin: Offset(0, 0.2),
                             end: Offset.zero,
                           ).animate(_animation),
-                          child: Container(
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeOutExpo,
                             margin: EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
                               color: _result!['result'] == 'stolen' ? Color(0xFFFFEBEE) : Color(0xFFE8F5E9),
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  spreadRadius: 0,
-                                  offset: Offset(0, 4),
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 6),
                                 ),
                               ],
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.all(18),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Titre du résultat
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          color: _result!['result'] == 'stolen' ? Colors.red[400] : Colors.green[400],
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          _result!['result'] == 'stolen' ? Icons.warning_rounded : Icons.check_circle,
-                                          color: Colors.white,
-                                          size: 22,
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          _result!['result'] == 'stolen' ? 'VÉHICULE VOLÉ DÉTECTÉ!' : 'VÉHICULE NON SIGNALÉ',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: _result!['result'] == 'stolen' ? Colors.red[700] : Colors.green[700],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  // Icône animée
+                                  Center(
+                                    child: AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 600),
+                                      child: _result!['result'] == 'stolen'
+                                        ? Icon(Icons.warning_rounded, key: ValueKey('stolen'), color: Colors.red[700], size: 48)
+                                        : Icon(Icons.verified, key: ValueKey('clean'), color: Colors.green[700], size: 48),
+                                    ),
                                   ),
-
-                                  SizedBox(height: 14),
+                                  SizedBox(height: 10),
+                                  Center(
+                                    child: Text(
+                                      _result!['result'] == 'stolen' ? 'VÉHICULE VOLÉ DÉTECTÉ !' : 'AUCUN VOL SIGNALÉ',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: _result!['result'] == 'stolen' ? Colors.red[700] : Colors.green[700],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
                                   Divider(),
                                   SizedBox(height: 8),
-
-                                  // Détails du véhicule
+                                  // Infos utiles seulement
                                   if (_result!['result'] == 'stolen' && _result!.containsKey('vehicleDetails')) ...[
-                                    _buildResultRow('Numéro de châssis', _result!['vehicleDetails']['chassis_number'] ?? _result!['chassisNumber'] ?? '-'),
-                                    _buildResultRow('Immatriculation', _result!['vehicleDetails']['license_plate'] ?? '-'),
                                     _buildResultRow('Marque', _result!['vehicleDetails']['make'] ?? '-'),
                                     _buildResultRow('Modèle', _result!['vehicleDetails']['model'] ?? '-'),
-                                    _buildResultRow('Année', _result!['vehicleDetails']['year']?.toString() ?? '-'),
                                     _buildResultRow('Couleur', _result!['vehicleDetails']['color'] ?? '-'),
-                                    _buildResultRow('Légion', _result!['vehicleDetails']['legion'] ?? '-'),
-                                    _buildResultRow('Statut', _result!['vehicleDetails']['status'] ?? '-'),
-                                    _buildResultRow('Propriétaire', _result!['vehicleDetails']['owner'] ?? '-'),
-                                    _buildResultRow('Téléphone', _result!['vehicleDetails']['phone'] ?? '-'),
-                                    _buildResultRow('Date du vol', _formatFirestoreDate(_result!['vehicleDetails']['theft_date'])),
+                                    _buildResultRow('Plaque', _result!['vehicleDetails']['license_plate'] ?? '-'),
+                                    _buildResultRow('Année', _result!['vehicleDetails']['year']?.toString() ?? '-'),
                                     _buildResultRow('Lieu du vol', _result!['vehicleDetails']['theft_location'] ?? '-'),
-                                    _buildResultRow('N° de dossier', _result!['vehicleDetails']['case_number'] ?? '-'),
-
+                                    _buildResultRow('Date du vol', _formatFirestoreDate(_result!['vehicleDetails']['theft_date'])),
+                                    _buildResultRow('Légion', _legionNames[_result!['vehicleDetails']['legion']] ?? _result!['vehicleDetails']['legion'] ?? '-'),
+                                    _buildResultRow('Statut', _result!['vehicleDetails']['status'] ?? '-'),
                                     SizedBox(height: 14),
-
-                                    // Message d'alerte
                                     Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.all(12),
@@ -1221,27 +1219,13 @@ class _CheckScreenState extends State<CheckScreen> with SingleTickerProviderStat
                                         color: Colors.red[100],
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Ce véhicule a été signalé comme volé. Veuillez contacter le commissariat le plus proche.',
-                                            style: TextStyle(
-                                              color: Colors.red[900],
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          SizedBox(height: 8),
-                                          if (_result!['requiresSelfie'] == true)
-                                            Text(
-                                              'La détection a été enregistrée pour une récompense.',
-                                              style: TextStyle(
-                                                color: Colors.red[900],
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                        ],
+                                      child: Text(
+                                        'Ce véhicule a été signalé comme volé. Contactez le commissariat le plus proche.',
+                                        style: TextStyle(
+                                          color: Colors.red[900],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   ] else ...[
@@ -1250,10 +1234,7 @@ class _CheckScreenState extends State<CheckScreen> with SingleTickerProviderStat
                                       _isChassisSelected ? _result!['chassisNumber'] : _result!['licensePlate'],
                                     ),
                                     _buildResultRow('Date de vérification', _result!['checkDate']),
-
                                     SizedBox(height: 14),
-
-                                    // Message de confirmation
                                     Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.all(12),

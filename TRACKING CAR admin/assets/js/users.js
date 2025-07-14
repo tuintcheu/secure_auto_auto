@@ -553,9 +553,10 @@ const stolenDetections = user.checks.filter(c => c.result === 'stolen').length;
                 'Statut': this.isUserActive(user) ? 'Actif' : 'Inactif'
             };
 
-            // Créer le CSV
-            const csvContent = this.convertToCSV([userData]);
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            // Créer le CSV avec BOM UTF-8 et séparateur point-virgule
+            const csvContent = this.convertToCSV([userData], ';');
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
             
             // Télécharger le fichier
             const link = document.createElement('a');
@@ -599,9 +600,10 @@ const stolenDetections = user.checks.filter(c => c.result === 'stolen').length;
                 };
             });
 
-            // Créer le CSV
-            const csvContent = this.convertToCSV(dataToExport);
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            // Créer le CSV avec BOM UTF-8 et séparateur point-virgule
+            const csvContent = this.convertToCSV(dataToExport, ';');
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
             
             // Télécharger le fichier
             const link = document.createElement('a');
@@ -623,14 +625,14 @@ const stolenDetections = user.checks.filter(c => c.result === 'stolen').length;
         }
     }
 
-    convertToCSV(data) {
+    convertToCSV(data, separator = ',') {
         if (data.length === 0) return '';
 
         const headers = Object.keys(data[0]);
         const csvRows = [];
 
         // En-têtes
-        csvRows.push(headers.join(','));
+        csvRows.push(headers.join(separator));
 
         // Données
         for (const row of data) {
@@ -638,7 +640,7 @@ const stolenDetections = user.checks.filter(c => c.result === 'stolen').length;
                 const value = row[header] || '';
                 return `"${value.toString().replace(/"/g, '""')}"`;
             });
-            csvRows.push(values.join(','));
+            csvRows.push(values.join(separator));
         }
 
         return csvRows.join('\n');

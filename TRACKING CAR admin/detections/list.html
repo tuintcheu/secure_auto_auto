@@ -177,7 +177,7 @@
                     </div>
                     
                     <div class="flex items-end">
-                        <button id="exportDetectionsBtn" class="btn btn-secondary w-full">
+                        <button id="exportBtn" class="btn btn-secondary w-full">
                             <i class="fas fa-download mr-2"></i>Exporter
                         </button>
                     </div>
@@ -272,5 +272,8 @@
     <script type="module" src="../assets/js/auth.js"></script>
     <script type="module" src="../assets/js/utils.js"></script>
     <script type="module" src="../assets/js/detections.js"></script>
+    <script>
+        document.getElementById('exportBtn').addEventListener('click', () => detectionsManager.exportData());
+    </script>
 </body>
 </html>

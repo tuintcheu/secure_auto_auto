@@ -283,5 +283,27 @@
     <script type="module" src="assets/js/utils.js"></script>
     <script type="module" src="assets/js/vehicles.js"></script>
     <script type="module" src="assets/js/dashboard.js"></script>
+    <button onclick="toggleDarkMode()" class="fixed top-4 right-4 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Basculer mode sombre/clair">
+      <i class="fas fa-moon text-gray-700 dark:text-yellow-300"></i>
+      <i class="fas fa-sun text-yellow-400 dark:text-gray-400 hidden"></i>
+    </button>
+    <script>
+      (function() {
+        function setDarkMode(dark) {
+          document.documentElement.classList.toggle('dark', dark);
+          localStorage.setItem('theme', dark ? 'dark' : 'light');
+        }
+        const userPref = localStorage.getItem('theme');
+        if (userPref) {
+          setDarkMode(userPref === 'dark');
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setDarkMode(true);
+        }
+        window.toggleDarkMode = function() {
+          setDarkMode(!document.documentElement.classList.contains('dark'));
+        }
+      })();
+    </script>
+    <!-- Ajoute les classes dark: sur les principaux éléments (body, cartes, textes, etc.) -->
 </body>
 </html>
