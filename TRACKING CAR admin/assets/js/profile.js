@@ -56,12 +56,9 @@ class ProfileManager {
     }
 
     async loadProfile() {
-        // Récupère l'admin connecté depuis la session
-        const admin = window.trackingCarAuth.getCurrentAdmin();
-        if (!admin) {
-            window.location.href = '../index.html';
-            return;
-        }
+        // Contrôle d'accès centralisé : seul l'admin connecté accède à son profil
+        const admin = window.checkAccessForAdmin();
+        if (!admin) throw new Error('Accès refusé ou non authentifié');
         // Charge les infos Firestore (admin_users)
         const adminQuery = query(
             collection(this.db, 'admin_users'),

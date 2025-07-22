@@ -250,5 +250,12 @@
     <script type="module" src="../assets/js/auth.js"></script>
     <script type="module" src="../assets/js/utils.js"></script>
     <script type="module" src="../assets/js/users.js"></script>
+    <script type="module">
+        const admin = window.checkAccessForAdmin();
+        if (admin && admin.role === 'legion_admin') {
+            alert('Accès refusé : seuls les admins globaux peuvent voir la liste des utilisateurs.');
+            window.location.href = '../dashboard.html';
+        }
+    </script>
 </body>
 </html>

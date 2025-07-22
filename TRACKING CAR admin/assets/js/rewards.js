@@ -118,15 +118,15 @@ class RewardsManager {
             document.getElementById('loadingState').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
 
-            const auth = window.trackingCarAuth;
+            // Contrôle d'accès centralisé et filtrage légion
+            const admin = window.checkAccessForAdmin();
+            if (!admin) throw new Error('Accès refusé ou non authentifié');
+
             let rewardsQuery = collection(this.db, 'rewards');
 
             // Filtrer par légion si admin de légion
-            if (!auth.isGlobalAdmin()) {
-                const legion = auth.getLegion();
-                if (legion) {
-                    rewardsQuery = query(rewardsQuery, where('legion', '==', legion));
-                }
+            if (admin.role === 'legion_admin' && admin.legion) {
+                rewardsQuery = query(rewardsQuery, where('legion', '==', admin.legion));
             }
 
             // Exclure les exemples et ordonner par date
@@ -142,6 +142,11 @@ class RewardsManager {
                 id: doc.id,
                 ...doc.data()
             }));
+
+            // Si admin de légion, filtrer les récompenses pour n'afficher que celles de sa légion
+            if (admin.role === 'legion_admin' && admin.legion) {
+                this.allRewards = this.allRewards.filter(r => r.legion === admin.legion);
+            }
 
             this.filteredRewards = [...this.allRewards];
 

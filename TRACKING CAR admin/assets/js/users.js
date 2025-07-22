@@ -78,7 +78,8 @@ class UsersManager {
                     email: c.user_email || '',
                     createdAt: c.check_date?.seconds ? new Date(c.check_date.seconds * 1000) : null,
                     lastActive: c.check_date?.seconds ? new Date(c.check_date.seconds * 1000) : null,
-                    checks: []
+                    checks: [],
+                    legion: c.legion || null // <-- Ajout du champ légion si présent dans les checks
                 });
             }
             const user = userMap.get(id);
@@ -92,12 +93,21 @@ class UsersManager {
             if (checkDate && (!user.createdAt || checkDate < user.createdAt)) {
                 user.createdAt = checkDate;
             }
+            // Mettre à jour la légion si présente
+            if (c.legion) {
+                user.legion = c.legion;
+            }
         });
 
         this.allUsers = Array.from(userMap.values());
+
+        // Filtrage par légion si admin de légion
+        const admin = window.checkAccessForAdmin();
+        if (admin && admin.role === 'legion_admin' && admin.legion) {
+            this.allUsers = this.allUsers.filter(u => u.legion === admin.legion);
+        }
         // Pour compatibilité avec le reste du code
         this.userDetections = new Map(this.allUsers.map(u => [u.id, u.checks]));
-
         this.filteredUsers = [...this.allUsers];
 
         document.getElementById('loadingState').style.display = 'none';

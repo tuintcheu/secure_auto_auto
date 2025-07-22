@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, getDocs, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 class DetectionsManager {
     constructor() {
@@ -84,34 +84,110 @@ class DetectionsManager {
             document.getElementById('loadingState').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
 
-            let detectionsQuery = collection(this.db, 'vehicle_checks');
-            const snapshot = await getDocs(detectionsQuery);
+            // Contrôle d'accès centralisé et filtrage légion
+            const admin = window.checkAccessForAdmin();
+            if (!admin) throw new Error('Accès refusé ou non authentifié');
 
-            this.allDetections = snapshot.docs.map(doc => {
-                const data = doc.data();
-                let location = null;
-                if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-                    location = { latitude: data.latitude, longitude: data.longitude };
-                }
-                return {
-                    id: doc.id,
-                    ...data,
-                    timestamp: data.check_date,
-                    location
-                };
-            });
-
-            this.filteredDetections = [...this.allDetections];
-
-            document.getElementById('loadingState').style.display = 'none';
-
-            if (this.allDetections.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
+            let detectionsQuery;
+            let legionCode = admin.legion;
+            // Mapping code <-> nom
+            const LEGION_MAP = {
+                l1: 'CENTRE', l2: 'LITTORAL', l3: 'OUEST', l4: 'SUD', l5: 'NORD', l6: 'ADAMAOUA', l7: 'EST', l8: 'EXTREME-NORD', l9: 'NORD-OUEST', l10: 'SUD-OUEST', l11: 'Logone-et-Chari (Far North)'
+            };
+            if (admin.role === 'legion_admin' && legionCode) {
+                legionCode = legionCode.trim().toLowerCase();
+                if (legionCode === 'centre') legionCode = 'l1';
+                if (legionCode === 'littoral') legionCode = 'l2';
+                if (legionCode === 'ouest') legionCode = 'l3';
+                if (legionCode === 'sud') legionCode = 'l4';
+                if (legionCode === 'nord') legionCode = 'l5';
+                if (legionCode === 'adamaoua') legionCode = 'l6';
+                if (legionCode === 'est') legionCode = 'l7';
+                if (legionCode === 'extreme-nord') legionCode = 'l8';
+                if (legionCode === 'nord-ouest') legionCode = 'l9';
+                if (legionCode === 'sud-ouest') legionCode = 'l10';
+                if (legionCode === 'logone-et-chari (far north)') legionCode = 'l11';
+                const legionName = LEGION_MAP[legionCode] || legionCode;
+                detectionsQuery = collection(this.db, 'vehicle_checks');
+                if (this._unsubDetections) this._unsubDetections();
+                this._unsubDetections = onSnapshot(detectionsQuery, (snapshot) => {
+                    this.allDetections = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        let location = null;
+                        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+                            location = { latitude: data.latitude, longitude: data.longitude };
+                        }
+                        return {
+                            id: doc.id,
+                            ...data,
+                            timestamp: data.check_date,
+                            location
+                        };
+                    }).filter(d => {
+                        // Accepte code ou nom
+                        return (d.legion && (d.legion.toLowerCase() === legionCode || d.legion.toUpperCase() === legionName.toUpperCase()));
+                    });
+                    this.filteredDetections = [...this.allDetections];
+                    document.getElementById('loadingState').style.display = 'none';
+                    if (this.allDetections.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                        const container = document.getElementById('detectionsList');
+                        if (container) {
+                            container.innerHTML = '<div style="background:orange; padding:16px; font-weight:bold;">AUCUNE DÉTECTION TROUVÉE POUR VOTRE LÉGION</div>';
+                        }
+                    } else {
+                        this.displayDetections();
+                        this.updateResultsCount();
+                        this.updateStats();
+                    }
+                }, (error) => {
+                    console.error('Erreur Firestore onSnapshot (détections):', error);
+                    const container = document.getElementById('detectionsList');
+                    if (container) {
+                        container.innerHTML = '<div style="background:red;color:white;padding:16px;font-weight:bold;">ERREUR JS: ' + error + '</div>';
+                    }
+                    TrackingCarUtils.showNotification('Erreur lors du chargement des détections (temps réel)', 'error');
+                });
+                return;
             } else {
-                this.displayDetections();
-                this.updateResultsCount();
-                this.updateStats();
+                detectionsQuery = collection(this.db, 'vehicle_checks');
             }
+            if (this._unsubDetections) this._unsubDetections();
+            this._unsubDetections = onSnapshot(detectionsQuery, (snapshot) => {
+                this.allDetections = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    let location = null;
+                    if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+                        location = { latitude: data.latitude, longitude: data.longitude };
+                    }
+                    return {
+                        id: doc.id,
+                        ...data,
+                        timestamp: data.check_date,
+                        location
+                    };
+                });
+                this.filteredDetections = [...this.allDetections];
+                document.getElementById('loadingState').style.display = 'none';
+                if (this.allDetections.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    const container = document.getElementById('detectionsList');
+                    if (container) {
+                        container.innerHTML = '<div style="background:orange; padding:16px; font-weight:bold;">AUCUNE DÉTECTION TROUVÉE (temps réel)</div>';
+                    }
+                } else {
+                    this.displayDetections();
+                    this.updateResultsCount();
+                    this.updateStats();
+                }
+            }, (error) => {
+                console.error('Erreur Firestore onSnapshot (détections):', error);
+                const container = document.getElementById('detectionsList');
+                if (container) {
+                    container.innerHTML = '<div style="background:red;color:white;padding:16px;font-weight:bold;">ERREUR JS: ' + error + '</div>';
+                }
+                TrackingCarUtils.showNotification('Erreur lors du chargement des détections (temps réel)', 'error');
+            });
         } catch (error) {
             console.error('Erreur chargement détections:', error);
             TrackingCarUtils.showNotification('Erreur lors du chargement des détections', 'error');

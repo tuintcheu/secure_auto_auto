@@ -923,5 +923,9 @@ export class ReportsManager {
 
 // Initialiser les rapports
 document.addEventListener('DOMContentLoaded', () => {
+    // Contrôle d'accès centralisé et filtrage légion
+    const admin = window.checkAccessForAdmin();
+    if (!admin) throw new Error('Accès refusé ou non authentifié');
+
     new ReportsManager();
 });

@@ -266,6 +266,38 @@ window.checkAuth = function() {
     return true;
 };
 
+/**
+ * Contrôle d'accès centralisé pour les pages admin.
+ * À appeler au début de chaque page JS principale.
+ * Redirige l'admin de légion hors des pages interdites et fournit la légion courante.
+ * @param {Object} [options] - Options de contrôle (peut contenir une liste de pages interdites personnalisée)
+ * @returns {Object|null} - L'objet admin courant (avec .role et .legion) ou null si non authentifié
+ */
+window.checkAccessForAdmin = function(options = {}) {
+    const admin = window.trackingCarAuth?.getCurrentAdmin?.();
+    if (!admin) {
+        window.location.href = '/index.html';
+        return null;
+    }
+    // Liste des pages interdites pour les admins de légion
+    const forbiddenForLegion = options.forbiddenPages || [
+        'settings/system.html',
+        'users/admins.html',
+        'logs.html',
+        'reports/dashboard.html',
+        // Ajoute ici d'autres pages si besoin
+    ];
+    if (admin.role === 'legion_admin') {
+        const currentPage = window.location.pathname.split('/').slice(-2).join('/');
+        if (forbiddenForLegion.includes(currentPage)) {
+            alert('Accès refusé à cette page.');
+            window.location.href = '/dashboard.html';
+            return null;
+        }
+    }
+    return admin;
+};
+
 // Fonction pour nettoyer avant de quitter la page
 window.addEventListener('beforeunload', () => {
     if (window.trackingCarAuth) {

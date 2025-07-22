@@ -5,6 +5,10 @@ if (!firebase.apps.length) {
     firebase.initializeApp(window.TrackingCarConfig?.FIREBASE_CONFIG || {});
 }
 
+// Contrôle d'accès centralisé et adaptation UI selon le rôle
+const admin = window.checkAccessForAdmin();
+if (!admin) throw new Error('Accès refusé ou non authentifié');
+
 class LegionDashboard {
     constructor() {
         this.db = getFirestore();

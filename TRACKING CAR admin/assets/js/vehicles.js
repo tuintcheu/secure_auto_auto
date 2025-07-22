@@ -1,22 +1,4 @@
-import { getFirestore, collection, query, where, getDocs, orderBy, doc, deleteDoc, updateDoc, addDoc, Timestamp, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-// Contrôle d'accès centralisé et adaptation UI selon le rôle
-document.addEventListener('DOMContentLoaded', () => {
-    const admin = window.trackingCarAuth?.getCurrentAdmin?.();
-    if (!admin) {
-        window.location.href = 'index.html';
-        return;
-    }
-    // Affiche/Masque les menus/fonctionnalités selon le rôle
-    if (admin.role === 'global_admin') {
-        document.querySelectorAll('.menu-global').forEach(e => e.classList.remove('hidden'));
-        document.querySelectorAll('.menu-legion').forEach(e => e.classList.add('hidden'));
-    } else {
-        document.querySelectorAll('.menu-global').forEach(e => e.classList.add('hidden'));
-        document.querySelectorAll('.menu-legion').forEach(e => e.classList.remove('hidden'));
-    }
-    window.vehiclesManager = new VehiclesManager(admin);
-});
+import { getFirestore, collection, query, where, getDocs, orderBy, doc, deleteDoc, updateDoc, addDoc, Timestamp, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Mapping des légions pour affichage clair
 window.TrackingCarConfig = window.TrackingCarConfig || {};
@@ -43,7 +25,6 @@ export class VehiclesManager {
         this.allVehicles = [];
         this.filteredVehicles = [];
         this.filters = { search: '', status: '', legion: '', period: '' };
-        this.admin = admin;
         this.init();
     }
 
@@ -104,9 +85,23 @@ export class VehiclesManager {
 
             let vehiclesQuery;
             const isGlobal = this.admin.role === 'global_admin';
-            const legion = this.admin.legion;
-
+            let legion = this.admin.legion;
+            // Log la valeur de legion utilisée
+            console.log('Filtre Firestore - legion (avant normalisation):', legion);
             if (!isGlobal && legion) {
+                legion = legion.trim().toLowerCase();
+                if (legion === 'centre') legion = 'l1';
+                if (legion === 'littoral') legion = 'l2';
+                if (legion === 'ouest') legion = 'l3';
+                if (legion === 'sud') legion = 'l4';
+                if (legion === 'nord') legion = 'l5';
+                if (legion === 'adamaoua') legion = 'l6';
+                if (legion === 'est') legion = 'l7';
+                if (legion === 'extreme-nord') legion = 'l8';
+                if (legion === 'nord-ouest') legion = 'l9';
+                if (legion === 'sud-ouest') legion = 'l10';
+                if (legion === 'logone-et-chari (far north)') legion = 'l11';
+                console.log('Filtre Firestore - legion (après normalisation):', legion);
                 vehiclesQuery = query(
                     collection(this.db, 'stolen_vehicles'),
                     where('legion', '==', legion),
@@ -120,10 +115,15 @@ export class VehiclesManager {
             }
 
             const snapshot = await getDocs(vehiclesQuery);
+            // Log brut Firestore
+            console.log('Firestore snapshot docs:', snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
             this.allVehicles = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+            if (this.admin.role === 'legion_admin' && this.admin.legion) {
+                this.allVehicles = this.allVehicles.filter(v => v.legion === this.admin.legion);
+            }
             this.filteredVehicles = [...this.allVehicles];
             if (loadingState) loadingState.style.display = 'none';
             if (this.allVehicles.length === 0) {
@@ -150,8 +150,8 @@ export class VehiclesManager {
     }
 
     applyFilters() {
+        // Désactiver tous les filtres sauf recherche utilisateur
         this.filteredVehicles = this.allVehicles.filter(vehicle => {
-            // Recherche
             if (this.filters.search) {
                 const searchText = this.filters.search;
                 const matchFields = [
@@ -164,49 +164,57 @@ export class VehiclesManager {
                 ].filter(Boolean).join(' ').toLowerCase();
                 if (!matchFields.includes(searchText)) return false;
             }
-            // Statut
-            if (this.filters.status && vehicle.status !== this.filters.status) return false;
-            // Légion
-            if (this.filters.legion && vehicle.legion !== this.filters.legion) return false;
-            // Période
-            if (this.filters.period && vehicle.theft_date) {
-                const theftDate = vehicle.theft_date.seconds ? new Date(vehicle.theft_date.seconds * 1000) : new Date(vehicle.theft_date);
-                const daysAgo = parseInt(this.filters.period);
-                const cutoffDate = new Date();
-                cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
-                if (theftDate < cutoffDate) return false;
-            }
             return true;
         });
+        // Log pour debug
+        console.log('Véhicules Firestore (camembert):', this.allVehicles.length, 'Affichés:', this.filteredVehicles.length, this.filteredVehicles);
     }
 
     displayVehicles() {
         const container = document.getElementById('vehiclesList');
-        if (!container) return;
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        const endIndex = startIndex + this.itemsPerPage;
-        const vehiclesToShow = this.filteredVehicles.slice(startIndex, endIndex);
-        if (vehiclesToShow.length === 0 && this.filteredVehicles.length > 0) {
-            this.currentPage = 1;
-            this.displayVehicles();
+        if (!container) {
+            console.error('Container #vehiclesList introuvable dans le HTML');
             return;
         }
-        if (vehiclesToShow.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-8">
-                    <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500 mb-4">Aucun véhicule ne correspond à vos critères</p>
-                    <button onclick="document.getElementById('clearFiltersBtn').click()" class="btn btn-primary">
-                        Effacer les filtres
-                    </button>
+        // Affichage debug : tous les véhicules sans pagination
+        if (!this.filteredVehicles || this.filteredVehicles.length === 0) {
+            container.innerHTML = '<div style="background:orange; padding:16px; font-weight:bold;">AUCUN VEHICULE À AFFICHER (debug) - filteredVehicles.length = ' + (this.filteredVehicles ? this.filteredVehicles.length : 'null') + '</div>';
+            console.log('DEBUG - filteredVehicles:', this.filteredVehicles);
+            return;
+        }
+        container.innerHTML = this.filteredVehicles.map((vehicle, index) => {
+            return `
+            <div class="border border-gray-200 rounded-lg p-4 mb-2 bg-white shadow">
+                <div class="font-bold text-blue-700 mb-1 text-lg">${vehicle.make || ''} ${vehicle.model || ''} ${vehicle.year ? '('+vehicle.year+')' : ''}</div>
+                <div class="grid grid-cols-2 gap-2 text-sm mb-2">
+                    <div><b>Plaque:</b> ${vehicle.license_plate || '<i>Non défini</i>'}</div>
+                    <div><b>Châssis:</b> ${vehicle.chassis_number || '<i>Non défini</i>'}</div>
+                    <div><b>Couleur:</b> ${vehicle.color || '<i>Non défini</i>'}</div>
+                    <div><b>Date vol:</b> ${vehicle.theft_date ? (vehicle.theft_date.seconds ? new Date(vehicle.theft_date.seconds * 1000).toLocaleDateString('fr-FR') : vehicle.theft_date) : '<i>Non défini</i>'}</div>
+                    <div><b>Lieu vol:</b> ${vehicle.theft_location || '<i>Non défini</i>'}</div>
+                    <div><b>Propriétaire:</b> ${vehicle.owner_name || '<i>Non défini</i>'}</div>
+                    <div><b>Légion:</b> ${vehicle.legion || '<i>Non défini</i>'}</div>
+                    <div><b>Statut:</b> ${vehicle.status || '<i>Non défini</i>'}</div>
                 </div>
+                <div class="mt-2">
+                    <b>Détections associées :</b> ${detections.length === 0 ? '<span class="text-gray-400">Aucune</span>' : ''}
+                    <ul class="mt-1 space-y-1">
+                        ${detections.map(d => `
+                            <li class="border rounded p-2 bg-gray-50 text-xs flex flex-col md:flex-row md:items-center md:space-x-2">
+                                <span><b>Date:</b> ${d.check_date && d.check_date.seconds ? new Date(d.check_date.seconds * 1000).toLocaleString('fr-FR') : ''}</span>
+                                <span><b>Utilisateur:</b> ${d.user_name || d.user_email || 'N/A'}</span>
+                                <span><b>Résultat:</b> <span class="${d.result === 'stolen' ? 'text-red-600' : 'text-green-600'}">${d.result === 'stolen' ? 'VOLÉ' : 'PROPRE'}</span></span>
+                                <span>
+                                    ${d.location ? `<button onclick="window.open('https://www.google.com/maps?q=${d.location.latitude},${d.location.longitude}','_blank')" class="btn btn-xs bg-green-100 text-green-700 ml-1">Localisation</button>` : ''}
+                                    ${d.selfie_url ? `<button onclick="window.open('${d.selfie_url}','_blank')" class="btn btn-xs bg-purple-100 text-purple-700 ml-1">Selfie</button>` : ''}
+                                </span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
             `;
-            const pagination = document.getElementById('pagination');
-            if (pagination) pagination.classList.add('hidden');
-            return;
-        }
-        container.innerHTML = vehiclesToShow.map((vehicle, index) => this.createVehicleCard(vehicle, startIndex + index)).join('');
-        this.updatePagination();
+        }).join('');
     }
 
     createVehicleCard(vehicle, index) {
@@ -433,5 +441,287 @@ export class VehiclesManager {
         if (date.seconds) date = new Date(date.seconds * 1000);
         else date = new Date(date);
         return date.toLocaleDateString('fr-FR');
+    }
+}
+
+// Initialisation après déclaration de la classe
+
+// Gestion du formulaire d'ajout de véhicule (add.html)
+document.addEventListener('DOMContentLoaded', () => {
+    // Contrôle d'accès centralisé et filtrage légion
+    const admin = window.checkAccessForAdmin();
+    if (!admin || !admin.role) {
+        const container = document.getElementById('vehiclesList');
+        if (container) {
+            container.innerHTML = '<div style="background:red;color:white;padding:16px;font-weight:bold;">ERREUR: Admin non authentifié ou mal formé (aucun affichage possible)</div>';
+        }
+        console.error('ERREUR: admin null ou mal formé', admin);
+        return;
+    }
+    // Affiche/Masque les menus/fonctionnalités selon le rôle
+    if (admin.role === 'global_admin') {
+        document.querySelectorAll('.menu-global').forEach(e => e.classList.remove('hidden'));
+        document.querySelectorAll('.menu-legion').forEach(e => e.classList.add('hidden'));
+    } else {
+        document.querySelectorAll('.menu-global').forEach(e => e.classList.add('hidden'));
+        document.querySelectorAll('.menu-legion').forEach(e => e.classList.remove('hidden'));
+    }
+    window.vehiclesManager = new VehiclesManager(admin);
+    // Ajoute une propriété pour stocker les détections par véhicule
+    window.vehiclesManager.vehicleDetections = {};
+    // Ajoute la récupération temps réel des détections pour tous les véhicules affichés
+    window.vehiclesManager.listenDetectionsForVehicles = function() {
+        const db = this.db;
+        // Nettoie les anciens listeners
+        if (this._detectionsUnsub) this._detectionsUnsub();
+        // Récupère toutes les plaques et châssis affichés
+        const plates = this.allVehicles.map(v => v.license_plate).filter(Boolean);
+        const chassis = this.allVehicles.map(v => v.chassis_number).filter(Boolean);
+        // Si aucun véhicule, rien à écouter
+        if (plates.length === 0 && chassis.length === 0) return;
+        // On écoute toutes les détections qui matchent une plaque ou un châssis
+        const q = query(
+            collection(db, 'vehicle_checks'),
+            // Firestore ne permet pas deux in dans la même requête, donc on écoute tout et on filtre côté JS
+        );
+        this._detectionsUnsub = onSnapshot(q, (snapshot) => {
+            // Regroupe les détections par véhicule
+            const allDetections = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            this.vehicleDetections = {};
+            for (const v of this.allVehicles) {
+                const vPl = v.license_plate;
+                const vCh = v.chassis_number;
+                this.vehicleDetections[v.id] = allDetections.filter(d =>
+                    (d.license_plate && vPl && d.license_plate === vPl) ||
+                    (d.chassis_number && vCh && d.chassis_number === vCh)
+                );
+            }
+            this.displayVehicles(); // Rafraîchit l'affichage
+        });
+    };
+    // Modifie displayVehicles pour afficher les détections sous chaque carte véhicule
+    const oldDisplayVehicles = window.vehiclesManager.displayVehicles;
+    window.vehiclesManager.displayVehicles = function() {
+        const container = document.getElementById('vehiclesList');
+        if (!container) return;
+        if (!this.filteredVehicles || this.filteredVehicles.length === 0) {
+            container.innerHTML = '<div style="background:orange; padding:16px; font-weight:bold;">AUCUN VEHICULE À AFFICHER (debug) - filteredVehicles.length = ' + (this.filteredVehicles ? this.filteredVehicles.length : 'null') + '</div>';
+            return;
+        }
+        container.innerHTML = this.filteredVehicles.map((vehicle, index) => {
+            const detections = (this.vehicleDetections && this.vehicleDetections[vehicle.id]) || [];
+            return `
+            <div class="border border-gray-200 rounded-lg p-4 mb-2 bg-white shadow">
+                <div class="font-bold text-blue-700 mb-1 text-lg">${vehicle.make || ''} ${vehicle.model || ''} ${vehicle.year ? '('+vehicle.year+')' : ''}</div>
+                <div class="grid grid-cols-2 gap-2 text-sm mb-2">
+                    <div><b>Plaque:</b> ${vehicle.license_plate || '<i>Non défini</i>'}</div>
+                    <div><b>Châssis:</b> ${vehicle.chassis_number || '<i>Non défini</i>'}</div>
+                    <div><b>Couleur:</b> ${vehicle.color || '<i>Non défini</i>'}</div>
+                    <div><b>Date vol:</b> ${vehicle.theft_date ? (vehicle.theft_date.seconds ? new Date(vehicle.theft_date.seconds * 1000).toLocaleDateString('fr-FR') : vehicle.theft_date) : '<i>Non défini</i>'}</div>
+                    <div><b>Lieu vol:</b> ${vehicle.theft_location || '<i>Non défini</i>'}</div>
+                    <div><b>Propriétaire:</b> ${vehicle.owner_name || '<i>Non défini</i>'}</div>
+                    <div><b>Légion:</b> ${vehicle.legion || '<i>Non défini</i>'}</div>
+                    <div><b>Statut:</b> ${vehicle.status || '<i>Non défini</i>'}</div>
+                </div>
+                <div class="flex justify-end space-x-2 mb-2">
+                    <button onclick="vehiclesManager.viewVehicle('${vehicle.id}')" class="btn text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1"><i class="fas fa-eye mr-1"></i>Détails</button>
+                    <button onclick="vehiclesManager.editVehicle('${vehicle.id}')" class="btn text-sm bg-yellow-100 text-yellow-700 hover:bg-yellow-200 px-3 py-1"><i class="fas fa-edit mr-1"></i>Modifier</button>
+                    ${vehicle.status === 'active' ? `<button onclick="vehiclesManager.markAsRecovered('${vehicle.id}')" class="btn text-sm bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1"><i class="fas fa-check mr-1"></i>Récupéré</button>` : ''}
+                    <button onclick="vehiclesManager.deleteVehicle('${vehicle.id}')" class="btn text-sm bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1"><i class="fas fa-trash mr-1"></i>Supprimer</button>
+                </div>
+                <div class="mt-2">
+                   
+                    <ul class="mt-1 space-y-1">
+                        ${detections.map(d => `
+                            <li class="border rounded p-2 bg-gray-50 text-xs flex flex-col md:flex-row md:items-center md:space-x-2">
+                                <span><b>Date:</b> ${d.check_date && d.check_date.seconds ? new Date(d.check_date.seconds * 1000).toLocaleString('fr-FR') : ''}</span>
+                                <span><b>Utilisateur:</b> ${d.user_name || d.user_email || 'N/A'}</span>
+                                <span><b>Résultat:</b> <span class="${d.result === 'stolen' ? 'text-red-600' : 'text-green-600'}">${d.result === 'stolen' ? 'VOLÉ' : 'PROPRE'}</span></span>
+                                <span>
+                                    ${d.location ? `<button onclick="window.open('https://www.google.com/maps?q=${d.location.latitude},${d.location.longitude}','_blank')" class="btn btn-xs bg-green-100 text-green-700 ml-1">Localisation</button>` : ''}
+                                    ${d.selfie_url ? `<button onclick="window.open('${d.selfie_url}','_blank')" class="btn btn-xs bg-purple-100 text-purple-700 ml-1">Selfie</button>` : ''}
+                                </span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            `;
+        }).join('');
+    };
+    // Patch: forcer l'affichage de tous les véhicules récupérés (pas de filtrage par rôle)
+    window.vehiclesManager.loadVehicles = function() {
+        try {
+            const loadingState = document.getElementById('loadingState');
+            if (loadingState) loadingState.style.display = '';
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.style.display = 'none';
+            const admin = this.admin;
+            let vehiclesQuery;
+            if (admin.role === 'legion_admin' && admin.legion) {
+                let legion = admin.legion.trim().toLowerCase();
+                if (legion === 'centre') legion = 'l1';
+                if (legion === 'littoral') legion = 'l2';
+                if (legion === 'ouest') legion = 'l3';
+                if (legion === 'sud') legion = 'l4';
+                if (legion === 'nord') legion = 'l5';
+                if (legion === 'adamaoua') legion = 'l6';
+                if (legion === 'est') legion = 'l7';
+                if (legion === 'extreme-nord') legion = 'l8';
+                if (legion === 'nord-ouest') legion = 'l9';
+                if (legion === 'sud-ouest') legion = 'l10';
+                if (legion === 'logone-et-chari (far north)') legion = 'l11';
+                vehiclesQuery = query(
+                    collection(this.db, 'stolen_vehicles'),
+                    where('legion', '==', legion),
+                    orderBy('theft_date', 'desc')
+                );
+            } else {
+                vehiclesQuery = query(
+                    collection(this.db, 'stolen_vehicles'),
+                    orderBy('theft_date', 'desc')
+                );
+            }
+            // Utilise onSnapshot pour la synchro temps réel
+            if (this._unsubscribe) this._unsubscribe();
+            this._unsubscribe = onSnapshot(vehiclesQuery, (snapshot) => {
+                this.allVehicles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                this.filteredVehicles = [...this.allVehicles];
+                if (loadingState) loadingState.style.display = 'none';
+                if (this.allVehicles.length === 0) {
+                    if (emptyState) emptyState.style.display = '';
+                    const container = document.getElementById('vehiclesList');
+                    if (container) {
+                        container.innerHTML = '<div style="background:orange; padding:16px; font-weight:bold;">AUCUN VEHICULE TROUVÉ POUR VOTRE LÉGION (debug)</div>';
+                    }
+                    console.log('DEBUG - Filtrage légion: aucun véhicule trouvé pour', admin.legion, this.allVehicles);
+                } else {
+                    this.displayVehicles();
+                    this.updateResultsCount();
+                }
+            }, (error) => {
+                console.error('Erreur Firestore onSnapshot:', error);
+                const container = document.getElementById('vehiclesList');
+                if (container) {
+                    container.innerHTML = '<div style="background:red;color:white;padding:16px;font-weight:bold;">ERREUR JS: ' + error + '</div>';
+                }
+                alert('Erreur lors du chargement des véhicules (temps réel)');
+            });
+        } catch (error) {
+            console.error('Erreur chargement véhicules (patch):', error);
+            const container = document.getElementById('vehiclesList');
+            if (container) {
+                container.innerHTML = '<div style="background:red;color:white;padding:16px;font-weight:bold;">ERREUR JS: ' + error + '</div>';
+            }
+            alert('Erreur lors du chargement des véhicules (patch)');
+        }
+    }
+    window.vehiclesManager.loadVehicles();
+
+    // Gestion du formulaire d'ajout
+    const form = document.getElementById('vehicleForm');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const db = window.vehiclesManager.db;
+            // Récupération des champs
+            const get = id => document.getElementById(id)?.value.trim();
+            // Correction: toujours stocker le code légion (l1, l2, ...)
+            let legionValue = admin.role === 'legion_admin' ? admin.legion : get('legion');
+            if (legionValue) {
+                legionValue = legionValue.trim().toLowerCase();
+                if (legionValue === 'centre') legionValue = 'l1';
+                if (legionValue === 'littoral') legionValue = 'l2';
+                if (legionValue === 'ouest') legionValue = 'l3';
+                if (legionValue === 'sud') legionValue = 'l4';
+                if (legionValue === 'nord') legionValue = 'l5';
+                if (legionValue === 'adamaoua') legionValue = 'l6';
+                if (legionValue === 'est') legionValue = 'l7';
+                if (legionValue === 'extreme-nord') legionValue = 'l8';
+                if (legionValue === 'nord-ouest') legionValue = 'l9';
+                if (legionValue === 'sud-ouest') legionValue = 'l10';
+                if (legionValue === 'logone-et-chari (far north)') legionValue = 'l11';
+            }
+            const data = {
+                license_plate: get('licensePlate'),
+                chassis_number: get('chassisNumber'),
+                make: get('make'),
+                model: get('model'),
+                year: get('year'),
+                color: get('color'),
+                theft_date: get('theftDate') ? new Date(get('theftDate')) : null,
+                theft_time: get('theftTime'),
+                theft_location: get('theftLocation'),
+                case_number: get('caseNumber'),
+                legion: legionValue,
+                description: get('description'),
+                owner_name: get('ownerName'),
+                owner_phone: get('ownerPhone'),
+                owner_cni: get('ownerCni'),
+                owner_address: get('ownerAddress'),
+                status: 'active',
+                created_at: new Date(),
+                reported_by_email: admin.email || '',
+            };
+            // Validation rapide
+            if (!data.license_plate || !data.chassis_number || !data.make || !data.model || !data.year || !data.color || !data.theft_date || !data.theft_location || !data.legion || !data.owner_name || !data.owner_phone) {
+                alert('Merci de remplir tous les champs obligatoires.');
+                return;
+            }
+            try {
+                // Ajout Firestore
+                await addDoc(collection(db, 'stolen_vehicles'), data);
+                alert('Véhicule enregistré avec succès !');
+                window.location.href = 'list.html';
+            } catch (err) {
+                alert('Erreur lors de l\'enregistrement du véhicule.');
+                console.error(err);
+            }
+        });
+        // Pour les admins de légion, on bloque le champ legion
+        if (admin.role === 'legion_admin') {
+            const legionSelect = document.getElementById('legion');
+            if (legionSelect) {
+                legionSelect.value = admin.legion;
+                legionSelect.disabled = true;
+            }
+        }
+    }
+});
+
+// Fonction de test pour exécuter la requête Firestore manuellement
+window.testFirestoreLegionQuery = async function(admin) {
+    const db = getFirestore();
+    let legion = admin.legion;
+    const isGlobal = admin.role === 'global_admin';
+    console.log('TEST - Filtre Firestore - legion (avant normalisation):', legion);
+    if (!isGlobal && legion) {
+        legion = legion.trim().toLowerCase();
+        if (legion === 'centre') legion = 'l1';
+        if (legion === 'littoral') legion = 'l2';
+        if (legion === 'ouest') legion = 'l3';
+        if (legion === 'sud') legion = 'l4';
+        if (legion === 'nord') legion = 'l5';
+        if (legion === 'adamaoua') legion = 'l6';
+        if (legion === 'est') legion = 'l7';
+        if (legion === 'extreme-nord') legion = 'l8';
+        if (legion === 'nord-ouest') legion = 'l9';
+        if (legion === 'sud-ouest') legion = 'l10';
+        if (legion === 'logone-et-chari (far north)') legion = 'l11';
+        console.log('TEST - Filtre Firestore - legion (après normalisation):', legion);
+        const vehiclesQuery = query(
+            collection(db, 'stolen_vehicles'),
+            where('legion', '==', legion),
+            orderBy('theft_date', 'desc')
+        );
+        const snapshot = await getDocs(vehiclesQuery);
+        console.log('TEST - Résultat Firestore:', snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
+    } else {
+        const vehiclesQuery = query(
+            collection(db, 'stolen_vehicles'),
+            orderBy('theft_date', 'desc')
+        );
+        const snapshot = await getDocs(vehiclesQuery);
+        console.log('TEST - Résultat Firestore (global):', snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
     }
 }

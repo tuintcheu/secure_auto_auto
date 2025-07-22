@@ -527,6 +527,13 @@ class SettingsManager {
 
 // Initialiser la gestion des paramètres
 document.addEventListener('DOMContentLoaded', () => {
+    // Contrôle d'accès centralisé : seuls les admins globaux ont accès à cette page
+    const admin = window.checkAccessForAdmin();
+    if (!admin || admin.role !== 'global_admin') {
+        alert('Accès réservé aux administrateurs globaux.');
+        window.location.href = '/dashboard.html';
+        throw new Error('Accès refusé');
+    }
     window.settingsManager = new SettingsManager();
 });
 
