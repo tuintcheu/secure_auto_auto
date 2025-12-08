@@ -1,0 +1,68 @@
+/* Balise body et conteneur principal */
+body {
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+/* Responsive container */
+.responsive-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Responsive grid */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Responsive card */
+.responsive-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 1.25rem;
+  transition: box-shadow 0.2s;
+}
+.responsive-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive button */
+.responsive-btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.responsive-btn:hover {
+  background: #1e40af;
+}
+
+/* Responsive input */
+.responsive-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}

@@ -11,7 +11,7 @@
 <body class="bg-gray-50">
     <!-- Header -->
     <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
-        <div class="px-4 sm:px-6 lg:px-8">
+        <div class="px-2 sm:px-4 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
@@ -21,11 +21,10 @@
                         <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
                             <i class="fas fa-shield-alt text-white text-sm"></i>
                         </div>
-                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                        <h1 class="text-base sm:text-xl font-bold text-gray-900">TRACKING CAR</h1>
                     </div>
                 </div>
-                
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     <div class="relative">
                         <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
                             <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -36,7 +35,6 @@
                                 <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
                             </div>
                         </button>
-                        
                         <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
                             <a href="../dashboard.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-chart-line mr-2"></i>Tableau de bord
@@ -53,28 +51,24 @@
 
     <!-- Sidebar -->
     <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
-        <nav class="mt-6 px-4">
+        <nav class="mt-6 px-2 sm:px-4">
             <div class="space-y-2">
                 <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
                     <i class="fas fa-chart-line mr-3 text-lg"></i>
                     Tableau de bord
                 </a>
-                
                 <a href="../vehicles/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
                     <i class="fas fa-car mr-3 text-lg"></i>
                     Véhicules volés
                 </a>
-                
                 <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
                     <i class="fas fa-search mr-3 text-lg"></i>
                     Détections mobiles
                 </a>
-                
                 <a href="../users/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
                     <i class="fas fa-users mr-3 text-lg"></i>
                     Utilisateurs app
                 </a>
-                
                 <a href="../rewards/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
                     <i class="fas fa-gift mr-3 text-lg"></i>
                     Récompenses
@@ -85,7 +79,7 @@
 
     <!-- Main content -->
     <main class="lg:ml-64 pt-16">
-        <div class="p-6">
+        <div class="p-2 sm:p-6">
             <!-- Breadcrumb -->
             <nav class="flex mb-6" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -105,58 +99,55 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Mon profil administrateur</h1>
-                <p class="text-gray-600">Gestion de vos informations personnelles et paramètres de compte</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Mon profil administrateur</h1>
+                <p class="text-gray-600 text-sm sm:text-base">Gestion de vos informations personnelles et paramètres de compte</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 <!-- Informations principales -->
-                <div class="lg:col-span-2 space-y-6">
+                <div class="lg:col-span-2 space-y-4 sm:space-y-6">
                     <!-- Informations personnelles -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-semibold text-gray-900">Informations personnelles</h3>
-                            <button id="editProfileBtn" class="btn btn-primary text-sm">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4 sm:mb-6">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900">Informations personnelles</h3>
+                            <button id="editProfileBtn" class="btn btn-primary text-xs sm:text-sm">
                                 <i class="fas fa-edit mr-1"></i>Modifier
                             </button>
                         </div>
-                        
-                        <div id="profileView" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div id="profileView" class="space-y-2 sm:space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
-                                    <div id="displayName" class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">-</div>
+                                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                                    <div id="displayName" class="text-xs sm:text-sm text-gray-900 bg-gray-50 p-2 sm:p-3 rounded-lg">-</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <div id="email" class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">-</div>
+                                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <div id="email" class="text-xs sm:text-sm text-gray-900 bg-gray-50 p-2 sm:p-3 rounded-lg">-</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
-                                    <div id="role" class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">-</div>
+                                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                                    <div id="role" class="text-xs sm:text-sm text-gray-900 bg-gray-50 p-2 sm:p-3 rounded-lg">-</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Légion</label>
-                                    <div id="legion" class="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">-</div>
+                                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Légion</label>
+                                    <div id="legion" class="text-xs sm:text-sm text-gray-900 bg-gray-50 p-2 sm:p-3 rounded-lg">-</div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <form id="profileForm" class="hidden space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <form id="profileForm" class="hidden space-y-2 sm:space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                                 <div>
-                                    <label class="form-label">Nom complet *</label>
+                                    <label class="form-label text-xs sm:text-sm">Nom complet *</label>
                                     <input type="text" id="editDisplayName" name="displayName" required class="form-input">
                                 </div>
                                 <div>
-                                    <label class="form-label">Email (non modifiable)</label>
+                                    <label class="form-label text-xs sm:text-sm">Email (non modifiable)</label>
                                     <input type="email" id="editEmail" name="email" readonly class="form-input bg-gray-100">
                                 </div>
                             </div>
-                            
-                            <div class="flex justify-end space-x-3">
-                                <button type="button" id="cancelEditBtn" class="btn btn-secondary">Annuler</button>
-                                <button type="submit" id="saveProfileBtn" class="btn btn-primary">
+                            <div class="flex justify-end space-x-2 sm:space-x-3">
+                                <button type="button" id="cancelEditBtn" class="btn btn-secondary text-xs sm:text-sm">Annuler</button>
+                                <button type="submit" id="saveProfileBtn" class="btn btn-primary text-xs sm:text-sm">
                                     <i class="fas fa-save mr-1"></i>Enregistrer
                                 </button>
                             </div>
@@ -164,29 +155,26 @@
                     </div>
 
                     <!-- Changement de mot de passe -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Sécurité du compte</h3>
-                        
-                        <form id="passwordForm" class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Sécurité du compte</h3>
+                        <form id="passwordForm" class="space-y-2 sm:space-y-4">
                             <div>
-                                <label class="form-label">Mot de passe actuel *</label>
+                                <label class="form-label text-xs sm:text-sm">Mot de passe actuel *</label>
                                 <input type="password" id="currentPassword" name="currentPassword" required class="form-input">
                             </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                                 <div>
-                                    <label class="form-label">Nouveau mot de passe *</label>
+                                    <label class="form-label text-xs sm:text-sm">Nouveau mot de passe *</label>
                                     <input type="password" id="newPassword" name="newPassword" required class="form-input" minlength="8">
                                     <small class="text-gray-500">Minimum 8 caractères</small>
                                 </div>
                                 <div>
-                                    <label class="form-label">Confirmer le nouveau mot de passe *</label>
+                                    <label class="form-label text-xs sm:text-sm">Confirmer le nouveau mot de passe *</label>
                                     <input type="password" id="confirmPassword" name="confirmPassword" required class="form-input">
                                 </div>
                             </div>
-                            
                             <div class="flex justify-end">
-                                <button type="submit" id="changePasswordBtn" class="btn btn-warning">
+                                <button type="submit" id="changePasswordBtn" class="btn btn-warning text-xs sm:text-sm">
                                     <i class="fas fa-key mr-1"></i>Changer le mot de passe
                                 </button>
                             </div>
@@ -194,10 +182,9 @@
                     </div>
 
                     <!-- Historique des connexions -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Historique des connexions</h3>
-                        
-                        <div id="loginHistory" class="space-y-3">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Historique des connexions</h3>
+                        <div id="loginHistory" class="space-y-2 sm:space-y-3">
                             <div class="text-center text-gray-500 py-4">
                                 <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
                                 <p>Chargement de l'historique...</p>
@@ -207,19 +194,18 @@
                 </div>
 
                 <!-- Sidebar informations -->
-                <div class="space-y-6">
+                <div class="space-y-4 sm:space-y-6">
                     <!-- Carte profil -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                         <div class="text-center">
-                            <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span id="profileInitials" class="text-white text-2xl font-bold">A</span>
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span id="profileInitials" class="text-white text-xl sm:text-2xl font-bold">A</span>
                             </div>
-                            <h4 id="profileDisplayName" class="font-semibold text-gray-900">Administrateur</h4>
-                            <p id="profileRole" class="text-sm text-gray-600">Rôle</p>
-                            <p id="profileLegion" class="text-sm text-gray-500">Légion</p>
+                            <h4 id="profileDisplayName" class="font-semibold text-gray-900 text-base sm:text-lg">Administrateur</h4>
+                            <p id="profileRole" class="text-xs sm:text-sm text-gray-600">Rôle</p>
+                            <p id="profileLegion" class="text-xs sm:text-sm text-gray-500">Légion</p>
                         </div>
-                        
-                        <div class="mt-6 space-y-3 text-sm">
+                        <div class="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Dernière connexion:</span>
                                 <span id="lastLogin" class="font-medium">-</span>
@@ -238,19 +224,17 @@
                     </div>
 
                     <!-- Permissions -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h4 class="font-semibold text-gray-900 mb-4">Vos permissions</h4>
-                        
-                        <div id="permissionsList" class="space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <h4 class="font-semibold text-gray-900 mb-2 sm:mb-4 text-base sm:text-lg">Vos permissions</h4>
+                        <div id="permissionsList" class="space-y-1 sm:space-y-2">
                             <!-- Les permissions seront chargées ici -->
                         </div>
                     </div>
 
                     <!-- Statistiques personnelles -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h4 class="font-semibold text-gray-900 mb-4">Vos statistiques</h4>
-                        
-                        <div class="space-y-3">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <h4 class="font-semibold text-gray-900 mb-2 sm:mb-4 text-base sm:text-lg">Vos statistiques</h4>
+                        <div class="space-y-2 sm:space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Connexions ce mois:</span>
                                 <span id="monthlyLogins" class="font-medium text-blue-600">-</span>
@@ -272,8 +256,8 @@
 
     <!-- Scripts -->
     <script type="module" src="/assets/js/firebase-config.js"></script>
-    <script type="module"  src="/assets/js/auth.js"></script>
-    <script type="module"  src="/assets/js/utils.js"></script>
-    <script type="module"  src="/assets/js/profile.js"></script>
+    <script type="module" src="/assets/js/auth.js"></script>
+    <script type="module" src="/assets/js/utils.js"></script>
+    <script type="module" src="/assets/js/profile.js"></script>
 </body>
 </html>

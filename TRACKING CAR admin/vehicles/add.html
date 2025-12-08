@@ -1,400 +1,980 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TRACKING CAR - Nouveau véhicule volé</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body class="bg-gray-50">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
-        <div class="px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="flex items-center ml-2">
-                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-shield-alt text-white text-sm"></i>
-                        </div>
-                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-blue-600"></i>
-                            </div>
-                            <div class="hidden md:block text-left">
-                                <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
-                                <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
-                            </div>
-                        </button>
-                        
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
-                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40"
+    >
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <button
+              id="sidebarToggle"
+              class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="flex items-center ml-2">
+              <div
+                class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-shield-alt text-white text-sm"></i>
+              </div>
+              <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
             </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button
+                id="userMenuBtn"
+                class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
+              >
+                <div
+                  class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"
+                >
+                  <i class="fas fa-user text-blue-600"></i>
+                </div>
+                <div class="hidden md:block text-left">
+                  <div id="userName" class="text-sm font-medium text-gray-900">
+                    Admin
+                  </div>
+                  <div id="userRole" class="text-xs text-gray-500">
+                    Administrateur
+                  </div>
+                </div>
+              </button>
+
+              <div
+                id="userDropdown"
+                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
+              >
+                <button
+                  id="logoutBtn"
+                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </header>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
-        <nav class="mt-6 px-4">
-            <div class="space-y-2">
-                <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-chart-line mr-3 text-lg"></i>
-                    Tableau de bord
-                </a>
-                
-                <a href="list.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <i class="fas fa-car mr-3 text-lg"></i>
-                    Véhicules volés
-                </a>
-                
-                <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-search mr-3 text-lg"></i>
-                    Détections mobiles
-                </a>
-                
-                <a href="../users/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-users mr-3 text-lg"></i>
-                    Utilisateurs app
-                </a>
-                
-                <a href="../rewards/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-gift mr-3 text-lg"></i>
-                    Récompenses
-                </a>
-            </div>
-        </nav>
+    <aside
+      id="sidebar"
+      class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30"
+    >
+      <nav class="mt-6 px-4">
+        <div class="space-y-2">
+          <a
+            href="../dashboard.html"
+            class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <i class="fas fa-chart-line mr-3 text-lg"></i>
+            Tableau de bord
+          </a>
+
+          <a
+            href="list.html"
+            class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg"
+          >
+            <i class="fas fa-car mr-3 text-lg"></i>
+            Véhicules volés
+          </a>
+
+          <a
+            href="../detections/list.html"
+            class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <i class="fas fa-search mr-3 text-lg"></i>
+            Détections mobiles
+          </a>
+
+          <a
+            href="../users/list.html"
+            class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <i class="fas fa-users mr-3 text-lg"></i>
+            Utilisateurs app
+          </a>
+
+          <a
+            href="../rewards/list.html"
+            class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100"
+          >
+            <i class="fas fa-gift mr-3 text-lg"></i>
+            Récompenses
+          </a>
+        </div>
+      </nav>
     </aside>
 
     <!-- Main content -->
     <main class="lg:ml-64 pt-16">
-        <div class="p-6">
-            <!-- Breadcrumb -->
-            <nav class="flex mb-6" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a href="list.html" class="text-gray-700 hover:text-blue-600">
-                            <i class="fas fa-car mr-2"></i>Véhicules volés
-                        </a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                            <span class="text-gray-500">Nouveau véhicule</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
+      <div class="p-6">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-6" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+              <a href="list.html" class="text-gray-700 hover:text-blue-600">
+                <i class="fas fa-car mr-2"></i>Véhicules volés
+              </a>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                <span class="text-gray-500">Nouveau véhicule</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
 
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Enregistrer un véhicule volé</h1>
-                <p class="text-gray-600">Conformément au cahier des charges TRACKING CAR - Saisie rapide et efficace</p>
-            </div>
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            Enregistrer un véhicule volé
+          </h1>
 
-            <!-- Formulaire -->
-            <form id="vehicleForm" class="space-y-6">
-                <!-- Informations générales -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                        Informations générales du véhicule
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label for="licensePlate" class="form-label">
-                                <i class="fas fa-id-card mr-1"></i>Plaque d'immatriculation *
-                            </label>
-                            <input type="text" id="licensePlate" name="licensePlate" required
-                                   class="form-input" placeholder="ex: AA1234BB"
-                                  >
-                            <small class="text-gray-500">Format camerounais: AA1234BB</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="chassisNumber" class="form-label">
-                                <i class="fas fa-barcode mr-1"></i>Numéro de châssis (VIN) *
-                            </label>
-                            <input type="text" id="chassisNumber" name="chassisNumber" required
-                                   class="form-input" placeholder="17 caractères" maxlength="17">
-                            <small class="text-gray-500">17 caractères alphanumériques</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="make" class="form-label">
-                                <i class="fas fa-industry mr-1"></i>Marque *
-                            </label>
-                            <select id="make" name="make" required class="form-input form-select">
-                                <option value="">Sélectionner une marque</option>
-                                <option value="Toyota">Toyota</option>
-                                <option value="Honda">Honda</option>
-                                <option value="Nissan">Nissan</option>
-                                <option value="Mercedes-Benz">Mercedes-Benz</option>
-                                <option value="BMW">BMW</option>
-                                <option value="Volkswagen">Volkswagen</option>
-                                <option value="Hyundai">Hyundai</option>
-                                <option value="Kia">Kia</option>
-                                <option value="Ford">Ford</option>
-                                <option value="Peugeot">Peugeot</option>
-                                <option value="Renault">Renault</option>
-                                <option value="Autre">Autre</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="model" class="form-label">
-                                <i class="fas fa-car mr-1"></i>Modèle *
-                            </label>
-                            <input type="text" id="model" name="model" required
-                                   class="form-input" placeholder="ex: Corolla, Camry...">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="year" class="form-label">
-                                <i class="fas fa-calendar mr-1"></i>Année de fabrication *
-                            </label>
-                            <select id="year" name="year" required class="form-input form-select">
-                                <option value="">Sélectionner l'année</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2021">2021</option>
-                                <option value="2020">2020</option>
-                                <option value="2019">2019</option>
-                                <option value="2018">2018</option>
-                                <option value="2017">2017</option>
-                                <option value="2016">2016</option>
-                                <option value="2015">2015</option>
-                                <option value="2014">2014</option>
-                                <option value="2013">2013</option>
-                                <option value="2012">2012</option>
-                                <option value="2011">2011</option>
-                                <option value="2010">2010</option>
-                                <option value="2009">2009</option>
-                                <option value="2008">2008</option>
-                                <option value="2007">2007</option>
-                                <option value="2006">2006</option>
-                                <option value="2005">2005</option>
-                                <option value="2004">2004</option>
-                                <option value="2003">2003</option>
-                                <option value="2002">2002</option>
-                                <option value="2001">2001</option>
-                                <option value="2000">2000</option>
-                                <option value="1999">1999</option>
-                                <option value="1998">1998</option>
-                                <option value="1997">1997</option>
-                                <option value="1996">1996</option>
-                                <option value="1995">1995</option>
-                                <option value="1994">1994</option>
-                                <option value="1993">1993</option>
-                                <option value="1992">1992</option>
-                                <option value="1991">1991</option>
-                                <option value="1990">1990</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="color" class="form-label">
-                                <i class="fas fa-palette mr-1"></i>Couleur *
-                            </label>
-                            <select id="color" name="color" required class="form-input form-select">
-                                <option value="">Sélectionner la couleur</option>
-                                <option value="Blanc">Blanc</option>
-                                <option value="Noir">Noir</option>
-                                <option value="Gris">Gris</option>
-                                <option value="Rouge">Rouge</option>
-                                <option value="Bleu">Bleu</option>
-                                <option value="Vert">Vert</option>
-                                <option value="Jaune">Jaune</option>
-                                <option value="Orange">Orange</option>
-                                <option value="Marron">Marron</option>
-                                <option value="Argent">Argent</option>
-                                <option value="Autre">Autre</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informations du vol -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
-                        Informations sur le vol
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label for="theftDate" class="form-label">
-                                <i class="fas fa-calendar-times mr-1"></i>Date du vol *
-                            </label>
-                            <input type="date" id="theftDate" name="theftDate" required
-                                   class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="theftTime" class="form-label">
-                                <i class="fas fa-clock mr-1"></i>Heure approximative
-                            </label>
-                            <input type="time" id="theftTime" name="theftTime"
-                                   class="form-input">
-                        </div>
-                        
-                        <div class="form-group md:col-span-2">
-                            <label for="theftLocation" class="form-label">
-                                <i class="fas fa-map-marker-alt mr-1"></i>Lieu du vol *
-                            </label>
-                            <input type="text" id="theftLocation" name="theftLocation" required
-                                   class="form-input" placeholder="Ville, quartier, rue...">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="caseNumber" class="form-label">
-                                <i class="fas fa-folder mr-1"></i>Numéro de dossier
-                            </label>
-                            <input type="text" id="caseNumber" name="caseNumber"
-                                   class="form-input" readonly>
-                            <small class="text-gray-500">Généré automatiquement</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="legion" class="form-label">
-                                <i class="fas fa-shield-alt mr-1"></i>Légion responsable *
-                            </label>
-                            <select id="legion" name="legion" required class="form-input form-select">
-                                <option value="">Sélectionner la légion</option>
-                                <option value="l1">CENTRE</option>
-                                <option value="l2">LITTORAL</option>
-                                <option value="l3">OUEST</option>
-                                <option value="l4">SUD</option>
-                                <option value="l5">NORD</option>
-                                <option value="l6">ADAMAOUA</option>
-                                <option value="l7">EST</option>
-                                <option value="l8">EXTREME-NORD</option>
-                                <option value="l9">NORD-OUEST</option>
-                                <option value="l10">SUD-OUEST</option>
-                                <option value="l11">Logone-et-Chari (Far North)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="description" class="form-label">
-                            <i class="fas fa-file-alt mr-1"></i>Description / Circonstances
-                        </label>
-                        <textarea id="description" name="description" rows="4"
-                                  class="form-input" placeholder="Décrivez les circonstances du vol, signes particuliers du véhicule..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Informations du propriétaire -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-user text-green-600 mr-2"></i>
-                        Informations du propriétaire
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label for="ownerName" class="form-label">
-                                <i class="fas fa-user mr-1"></i>Nom complet *
-                            </label>
-                            <input type="text" id="ownerName" name="ownerName" required
-                                   class="form-input" placeholder="Nom et prénom">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="ownerPhone" class="form-label">
-                                <i class="fas fa-phone mr-1"></i>Téléphone *
-                            </label>
-                            <input type="tel" id="ownerPhone" name="ownerPhone" required
-                                   class="form-input" placeholder="ex: +237 6XX XXX XXX">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="ownerCni" class="form-label">
-                                <i class="fas fa-id-card mr-1"></i>CNI / Passeport
-                            </label>
-                            <input type="text" id="ownerCni" name="ownerCni"
-                                   class="form-input" placeholder="Numéro de pièce d'identité">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="ownerAddress" class="form-label">
-                                <i class="fas fa-home mr-1"></i>Adresse
-                            </label>
-                            <input type="text" id="ownerAddress" name="ownerAddress"
-                                   class="form-input" placeholder="Adresse de résidence">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-end">
-                    <a href="list.html" class="btn btn-secondary order-2 sm:order-1">
-                        <i class="fas fa-times mr-2"></i>Annuler
-                    </a>
-                    
-                    <button type="button" id="saveDraftBtn" class="btn bg-gray-600 text-white hover:bg-gray-700 order-3 sm:order-2">
-                        <i class="fas fa-save mr-2"></i>Sauvegarder brouillon
-                    </button>
-                    
-                    <button type="submit" id="submitBtn" class="btn btn-primary order-1 sm:order-3">
-                        <i class="fas fa-plus mr-2"></i>Enregistrer le véhicule
-                    </button>
-                </div>
-            </form>
         </div>
+
+        <!-- Formulaire -->
+        <form id="vehicleForm" class="space-y-6">
+          <!-- Informations sur le véhicule volé pour statistiques -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-white bg-blue-600 px-4 py-2 rounded-md mb-6 flex items-center">
+              <i class="fas fa-car-crash text-white mr-2"></i>
+              Informations sur le véhicule volé
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="form-group">
+                <label for="registrationNumber" class="form-label">
+                  <i class="fas fa-hashtag mr-1"></i>Numéro d'enregistrement *
+                </label>
+                <input
+                  type="text"
+                  id="registrationNumber"
+                  name="registrationNumber"
+                  required
+                  class="form-input"
+                  placeholder="Numéro d'enregistrement"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="theftDate" class="form-label">
+                  <i class="far fa-calendar-alt mr-1"></i>Date du vol *
+                </label>
+                <input
+                  type="date"
+                  id="theftDate"
+                  name="theftDate"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="theftTime" class="form-label">
+                  <i class="far fa-clock mr-1"></i>Heure du vol *
+                </label>
+                <input
+                  type="time"
+                  id="theftTime"
+                  name="theftTime"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="theftLocation" class="form-label">
+                  <i class="fas fa-map-marker-alt mr-1"></i>Lieu du vol *
+                </label>
+                <input
+                  type="text"
+                  id="theftLocation"
+                  name="theftLocation"
+                  required
+                  class="form-input"
+                  placeholder="Lieu exact du vol"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-car-side mr-1"></i>Type de véhicule *
+                </label>
+                <div class="space-y-2">
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="voiture" class="form-checkbox">
+                    <span class="ml-2">Voiture de tourisme</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="moto" class="form-checkbox">
+                    <span class="ml-2">Moto</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="camion" class="form-checkbox">
+                    <span class="ml-2">Camion</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="transport_commun" class="form-checkbox">
+                    <span class="ml-2">Transport en commun</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="utilitaire" class="form-checkbox">
+                    <span class="ml-2">Utilitaire</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="administratif" class="form-checkbox">
+                    <span class="ml-2">Administratif</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="vehicleType" value="militaire" class="form-checkbox">
+                    <span class="ml-2">Militaire/Police</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="checkbox" name="vehicleType" value="autre" class="form-checkbox">
+                    <input type="text" placeholder="Autre (préciser)" class="form-input ml-2 w-40">
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleMake" class="form-label">
+                  <i class="fas fa-industry mr-1"></i>Marque *
+                </label>
+                <input
+                  type="text"
+                  id="vehicleMake"
+                  name="make"
+                  required
+                  class="form-input"
+                  placeholder="Marque du véhicule"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleModel" class="form-label">
+                  <i class="fas fa-car-side mr-1"></i>Modèle *
+                </label>
+                <input
+                  type="text"
+                  id="vehicleModel"
+                  name="model"
+                  required
+                  class="form-input"
+                  placeholder="Modèle du véhicule"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleYear" class="form-label">
+                  <i class="far fa-calendar mr-1"></i>Année *
+                </label>
+                <input
+                  type="number"
+                  id="vehicleYear"
+                  name="year"
+                  min="1900"
+                  max="2025"
+                  class="form-input"
+                  placeholder="Année de fabrication"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleColor" class="form-label">
+                  <i class="fas fa-palette mr-1"></i>Couleur *
+                </label>
+                <input
+                  type="text"
+                  id="vehicleColor"
+                  name="color"
+                  class="form-input"
+                  placeholder="Couleur du véhicule"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleLicensePlate" class="form-label">
+                  <i class="fas fa-id-card mr-1"></i>Immatriculation *
+                </label>
+                <input
+                  type="text"
+                  id="vehicleLicensePlate"
+                  name="licensePlate"
+                  required
+                  class="form-input"
+                  placeholder="Plaque d'immatriculation"
+                />
+                <small class="text-gray-500">Format: AA1234BB</small>
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleChassisNumber" class="form-label">
+                  <i class="fas fa-barcode mr-1"></i>Numéro de châssis *
+                </label>
+                <input
+                  type="text"
+                  id="vehicleChassisNumber"
+                  name="chassisNumber"
+                  required
+                  class="form-input"
+                  placeholder="17 caractères"
+                  maxlength="17"
+                />
+                <small class="text-gray-500">17 caractères alphanumériques</small>
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleEngineNumber" class="form-label">
+                  <i class="fas fa-cog mr-1"></i>Numéro de moteur
+                </label>
+                <input
+                  type="text"
+                  id="vehicleEngineNumber"
+                  name="engineNumber"
+                  class="form-input"
+                  placeholder="Numéro de moteur"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="vehicleEstimatedValue" class="form-label">
+                  <i class="fas fa-tags mr-1"></i>Valeur estimée (FCFA)
+                </label>
+                <input
+                  type="number"
+                  id="vehicleEstimatedValue"
+                  name="estimatedValue"
+                  class="form-input"
+                  placeholder="Valeur estimée en FCFA"
+                  min="0"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="legion" class="form-label">
+                  <i class="fas fa-map-marked-alt mr-1"></i>Légion responsable *
+                </label>
+                <select
+                  id="legion"
+                  name="legion"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Sélectionnez une légion</option>
+                  <option value="l1">CENTRE</option>
+                  <option value="l2">LITTORAL</option>
+                  <option value="l3">OUEST</option>
+                  <option value="l4">SUD</option>
+                  <option value="l5">NORD</option>
+                  <option value="l6">ADAMAOUA</option>
+                  <option value="l7">EST</option>
+                  <option value="l8">EXTREME-NORD</option>
+                  <option value="l9">NORD-OUEST</option>
+                  <option value="l10">SUD-OUEST</option>
+                  <option value="l11">GENDARMERIE MOBILE</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-map-marked-alt mr-1"></i>Type de zone *
+                </label>
+                <div class="space-x-4">
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="zoneType" value="urbaine" class="form-radio" required>
+                    <span class="ml-2">Urbaine</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="zoneType" value="periurbaine" class="form-radio">
+                    <span class="ml-2">Périurbaine</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="zoneType" value="rurale" class="form-radio">
+                    <span class="ml-2">Rurale</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-lightbulb mr-1"></i>Visibilité du véhicule
+                </label>
+                <div class="space-x-4">
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="visibility" value="bien_eclaire" class="form-radio">
+                    <span class="ml-2">Bien éclairé</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="visibility" value="mal_eclaire" class="form-radio">
+                    <span class="ml-2">Mal éclairé</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-shield-alt mr-1"></i>Système antivol
+                </label>
+                <div class="space-x-4">
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="antitheft_present" value="present" class="form-radio">
+                    <span class="ml-2">Présent</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="antitheft_present" value="absent" class="form-radio">
+                    <span class="ml-2">Absent</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-lock mr-1"></i>Type d'antivol
+                </label>
+                <div class="space-y-2">
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="antitheftType" value="mecanique" class="form-checkbox">
+                    <span class="ml-2">Mécanique</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="antitheftType" value="electronique" class="form-checkbox">
+                    <span class="ml-2">Électronique</span>
+                  </label>
+                  <label class="inline-flex items-center mr-4">
+                    <input type="checkbox" name="antitheftType" value="gps" class="form-checkbox">
+                    <span class="ml-2">GPS</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="checkbox" name="antitheftType" value="aucun" class="form-checkbox">
+                    <span class="ml-2">Aucun</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label block mb-2">
+                  <i class="fas fa-search-location mr-1"></i>Véhicule retrouvé
+                </label>
+                <div class="space-x-4">
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="found" value="oui" class="form-radio">
+                    <span class="ml-2">Oui</span>
+                  </label>
+                  <label class="inline-flex items-center">
+                    <input type="radio" name="found" value="non" class="form-radio" checked>
+                    <span class="ml-2">Non</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="foundDate" class="form-label">
+                  <i class="far fa-calendar-check mr-1"></i>Date de retrouvaille
+                </label>
+                <input
+                  type="date"
+                  id="foundDate"
+                  name="foundDate"
+                  class="form-input"
+                  disabled
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="foundCondition" class="form-label">
+                  <i class="fas fa-car-crash mr-1"></i>État du véhicule retrouvé
+                </label>
+                <input
+                  type="text"
+                  id="foundCondition"
+                  name="foundCondition"
+                  class="form-input"
+                  placeholder="État du véhicule"
+                  disabled
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="foundDelay" class="form-label">
+                  <i class="fas fa-clock mr-1"></i>Délai de retrouvaille
+                </label>
+                <input
+                  type="text"
+                  id="foundDelay"
+                  name="foundDelay"
+                  class="form-input"
+                  placeholder="Ex: 2 jours, 3 heures"
+                  disabled
+                />
+              </div>
+
+              <div class="form-group md:col-span-2">
+                <label for="distinctiveFeatures" class="form-label">
+                  <i class="fas fa-tags mr-1"></i>Caractéristiques distinctives
+                </label>
+                <textarea
+                  id="distinctiveFeatures"
+                  name="distinctiveFeatures"
+                  class="form-input"
+                  rows="3"
+                  placeholder="Décrivez les caractéristiques distinctives du véhicule (autocollants, rayures, accessoires particuliers, etc.)"
+                ></textarea>
+              </div>
+
+              <!-- Informations sur le propriétaire -->
+              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-md font-semibold text-white bg-green-600 px-4 py-2 rounded-md mb-4">
+                  <i class="fas fa-user-tie text-white mr-2"></i>Informations sur le propriétaire
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="form-group">
+                    <label for="ownerLastName" class="form-label">
+                      <i class="fas fa-user mr-1"></i>Nom *
+                    </label>
+                    <input
+                      type="text"
+                      id="ownerLastName"
+                      name="ownerLastName"
+                      required
+                      class="form-input"
+                      placeholder="Nom du propriétaire"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerFirstName" class="form-label">
+                      <i class="fas fa-user mr-1"></i>Prénom *
+                    </label>
+                    <input
+                      type="text"
+                      id="ownerFirstName"
+                      name="ownerFirstName"
+                      required
+                      class="form-input"
+                      placeholder="Prénom du propriétaire"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerAddress" class="form-label">
+                      <i class="fas fa-map-marker-alt mr-1"></i>Adresse
+                    </label>
+                    <input
+                      type="text"
+                      id="ownerAddress"
+                      name="ownerAddress"
+                      class="form-input"
+                      placeholder="Adresse complète"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerPhone" class="form-label">
+                      <i class="fas fa-phone-alt mr-1"></i>Téléphone *
+                    </label>
+                    <input
+                      type="tel"
+                      id="ownerPhone"
+                      name="ownerPhone"
+                      required
+                      class="form-input"
+                      placeholder="Numéro de téléphone"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerEmail" class="form-label">
+                      <i class="fas fa-envelope mr-1"></i>Email
+                    </label>
+                    <input
+                      type="email"
+                      id="ownerEmail"
+                      name="ownerEmail"
+                      class="form-input"
+                      placeholder="Adresse email"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerIdNumber" class="form-label">
+                      <i class="fas fa-id-card mr-1"></i>N° pièce d'identité *
+                    </label>
+                    <input
+                      type="text"
+                      id="ownerIdNumber"
+                      name="ownerIdNumber"
+                      required
+                      class="form-input"
+                      placeholder="Numéro de CNI/Passeport"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ownerProfession" class="form-label">
+                      <i class="fas fa-briefcase mr-1"></i>Profession
+                    </label>
+                    <input
+                      type="text"
+                      id="ownerProfession"
+                      name="ownerProfession"
+                      class="form-input"
+                      placeholder="Profession"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Informations sur le vol -->
+              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-md font-semibold text-white bg-red-600 px-4 py-2 rounded-md mb-4">
+                  <i class="fas fa-exclamation-triangle text-white mr-2"></i>Informations sur le vol
+                </h4>
+                <div class="grid grid-cols-1 gap-6">
+                  <div class="form-group">
+                    <label for="theftCircumstances" class="form-label">
+                      <i class="fas fa-clipboard-list mr-1"></i>Circonstances du vol
+                    </label>
+                    <textarea
+                      id="theftCircumstances"
+                      name="theftCircumstances"
+                      class="form-input"
+                      rows="3"
+                      placeholder="Décrivez les circonstances du vol"
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="witnesses" class="form-label">
+                      <i class="fas fa-users mr-1"></i>Témoins
+                    </label>
+                    <textarea
+                      id="witnesses"
+                      name="witnesses"
+                      class="form-input"
+                      rows="2"
+                      placeholder="Noms et coordonnées des témoins éventuels"
+                    ></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        id="reportedToPolice"
+                        name="reportedToPolice"
+                        class="form-checkbox"
+                      />
+                      <span class="ml-2">Déjà signalé à la police</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Espace agent -->
+              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-md font-semibold text-white bg-purple-600 px-4 py-2 rounded-md mb-4">
+                  <i class="fas fa-user-shield text-white mr-2"></i>Espace agent
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="form-group">
+                    <label for="recordingAgent" class="form-label">
+                      <i class="fas fa-user-edit mr-1"></i>Agent enregistreur *
+                    </label>
+                    <input
+                      type="text"
+                      id="recordingAgent"
+                      name="recordingAgent"
+                      required
+                      class="form-input"
+                      placeholder="Nom de l'agent"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="registrationDate" class="form-label">
+                      <i class="far fa-calendar-alt mr-1"></i>Date d'enregistrement *
+                    </label>
+                    <input
+                      type="date"
+                      id="registrationDate"
+                      name="registrationDate"
+                      required
+                      class="form-input"
+                      value=""
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="caseStatus" class="form-label">
+                      <i class="fas fa-clipboard-check mr-1"></i>Statut du dossier *
+                    </label>
+                    <select
+                      id="caseStatus"
+                      name="caseStatus"
+                      required
+                      class="form-input"
+                    >
+                      <option value="ouvert">Ouvert</option>
+                      <option value="en_cours">En cours</option>
+                      <option value="resolu">Résolu</option>
+                      <option value="classe">Classé</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="caseNumber" class="form-label">
+                      <i class="fas fa-hashtag mr-1"></i>Numéro de dossier
+                    </label>
+                    <input
+                      type="text"
+                      id="caseNumber"
+                      name="caseNumber"
+                      class="form-input"
+                      placeholder="Numéro de dossier"
+                    />
+                  </div>
+
+                  <div class="form-group md:col-span-2">
+                    <label for="agentObservations" class="form-label">
+                      <i class="fas fa-clipboard mr-1"></i>Observations
+                    </label>
+                    <textarea
+                      id="agentObservations"
+                      name="agentObservations"
+                      class="form-input"
+                      rows="3"
+                      placeholder="Observations supplémentaires"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="make" class="form-label">
+                  <i class="fas fa-industry mr-1"></i>Marque *
+                </label>
+                <select
+                  id="make"
+                  name="make"
+                  required
+                  class="form-input form-select"
+                >
+                  <option value="">Sélectionner une marque</option>
+                  <option value="Toyota">Toyota</option>
+                  <option value="Honda">Honda</option>
+                  <option value="Nissan">Nissan</option>
+                  <option value="Mercedes-Benz">Mercedes-Benz</option>
+                  <option value="BMW">BMW</option>
+                  <option value="Volkswagen">Volkswagen</option>
+                  <option value="Hyundai">Hyundai</option>
+                  <option value="Kia">Kia</option>
+                  <option value="Ford">Ford</option>
+                  <option value="Peugeot">Peugeot</option>
+                  <option value="Renault">Renault</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="model" class="form-label">
+                  <i class="fas fa-car mr-1"></i>Modèle *
+                </label>
+                <input
+                  type="text"
+                  id="model"
+                  name="model"
+                  required
+                  class="form-input"
+                  placeholder="ex: Corolla, Camry..."
+                />
+              </div>
+
+            </div>
+          </div>
+
+
+
+          <!-- Actions -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-end">
+            <a href="list.html" class="btn btn-secondary order-2 sm:order-1">
+              <i class="fas fa-times mr-2"></i>Annuler
+            </a>
+
+            <button
+              type="button"
+              id="saveDraftBtn"
+              class="btn bg-gray-600 text-white hover:bg-gray-700 order-3 sm:order-2"
+            >
+              <i class="fas fa-save mr-2"></i>Sauvegarder brouillon
+            </button>
+
+            <button
+              type="submit"
+              id="submitBtn"
+              class="btn btn-primary order-1 sm:order-3"
+            >
+              <i class="fas fa-plus mr-2"></i>Enregistrer le véhicule
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
 
     <!-- Modal de confirmation -->
-    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg max-w-md w-full mx-4">
-            <div class="p-6">
-                <div class="flex items-center mb-4">
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-question text-blue-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Confirmer l'enregistrement</h3>
-                        <p class="text-gray-600">Êtes-vous sûr de vouloir enregistrer ce véhicule comme volé ?</p>
-                    </div>
-                </div>
-                
-                <div id="confirmDetails" class="bg-gray-50 rounded-lg p-4 mb-6">
-                    <!-- Vehicle summary will be displayed here -->
-                </div>
-                
-                <div class="flex justify-end space-x-3">
-                    <button id="cancelConfirmBtn" class="btn btn-secondary">Annuler</button>
-                    <button id="confirmSubmitBtn" class="btn btn-primary">
-                        <i class="fas fa-check mr-2"></i>Confirmer
-                    </button>
-                </div>
+    <div
+      id="confirmModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg max-w-md w-full mx-4">
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div
+              class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4"
+            >
+              <i class="fas fa-question text-blue-600 text-xl"></i>
             </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">
+                Confirmer l'enregistrement
+              </h3>
+              <p class="text-gray-600">
+                Êtes-vous sûr de vouloir enregistrer ce véhicule comme volé ?
+              </p>
+            </div>
+          </div>
+
+          <div id="confirmDetails" class="bg-gray-50 rounded-lg p-4 mb-6">
+            <!-- Vehicle summary will be displayed here -->
+          </div>
+
+          <div class="flex justify-end space-x-3">
+            <button id="cancelConfirmBtn" class="btn btn-secondary">
+              Annuler
+            </button>
+            <button id="confirmSubmitBtn" class="btn btn-primary">
+              <i class="fas fa-check mr-2"></i>Confirmer
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Scripts -->
     <script type="module" src="../assets/js/firebase-config.js"></script>
-<script type="module" src="../assets/js/auth.js"></script>
-<script type="module" src="../assets/js/utils.js"></script>
-<script type="module" src="../assets/js/vehicles.js"></script>
-<!-- <script type="module" src="../assets/js/dashboard.js"></script> -->
-</body>
+    <script type="module" src="../assets/js/auth.js"></script>
+    <script type="module" src="../assets/js/utils.js"></script>
+    <script type="module" src="../assets/js/vehicles.js"></script>
+    <script>
+      // Définir la date d'enregistrement à aujourd'hui par défaut
+      document.addEventListener('DOMContentLoaded', function() {
+        // Définir la date d'enregistrement à aujourd'hui
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('registrationDate').value = today;
+        
+        // Gérer l'état des champs en fonction du statut "Véhicule retrouvé"
+        const foundRadios = document.querySelectorAll('input[name="found"]');
+        const foundDateInput = document.getElementById('foundDate');
+        const foundConditionInput = document.getElementById('foundCondition');
+        const foundDelayInput = document.getElementById('foundDelay');
+        
+        function toggleFoundFields() {
+          const isFound = document.querySelector('input[name="found"]:checked').value === 'oui';
+          
+          foundDateInput.disabled = !isFound;
+          foundConditionInput.disabled = !isFound;
+          foundDelayInput.disabled = !isFound;
+          
+          if (!isFound) {
+            foundDateInput.value = '';
+            foundConditionInput.value = '';
+            foundDelayInput.value = '';
+          }
+        }
+        
+        // Écouter les changements sur les boutons radio "Véhicule retrouvé"
+        foundRadios.forEach(radio => {
+          radio.addEventListener('change', toggleFoundFields);
+        });
+        
+        // Initialiser l'état des champs
+        toggleFoundFields();
+        
+        // Valider le numéro de châssis (17 caractères alphanumériques)
+        const chassisInput = document.getElementById('vehicleChassisNumber');
+        if (chassisInput) {
+          chassisInput.addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          });
+        }
+        
+        // Valider la plaque d'immatriculation (format AA1234BB)
+        const licensePlateInput = document.getElementById('vehicleLicensePlate');
+        if (licensePlateInput) {
+          licensePlateInput.addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          });
+        }
+        
+        // Gérer la soumission du formulaire
+        const form = document.getElementById('vehicleForm');
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Valider le format de la plaque d'immatriculation si le champ existe
+          if (licensePlateInput) {
+            const licensePlate = licensePlateInput.value;
+            const licensePlateRegex = /^[A-Z]{2}[0-9]{4}[A-Z]{2}$/;
+            if (!licensePlateRegex.test(licensePlate)) {
+              alert('Le format de la plaque d\'immatriculation est invalide. Format attendu: AA1234BB');
+              licensePlateInput.focus();
+              return false;
+            }
+          }
+          
+          // Valider le numéro de châssis (17 caractères) si le champ existe
+          if (chassisInput && chassisInput.value.length !== 17) {
+            alert('Le numéro de châssis doit contenir exactement 17 caractères alphanumériques.');
+            chassisInput.focus();
+            return false;
+          }
+          
+          // Si le véhicule est marqué comme retrouvé, vérifier que les champs sont remplis
+          if (document.querySelector('input[name="found"]:checked').value === 'oui') {
+            if (!foundDateInput.value) {
+              alert('Veuillez spécifier la date de retrouvaille.');
+              foundDateInput.focus();
+              return false;
+            }
+            if (!foundConditionInput.value) {
+              alert('Veuillez spécifier l\'état du véhicule retrouvé.');
+              foundConditionInput.focus();
+              return false;
+            }
+          }
+          
+          // Si tout est valide, soumettre le formulaire
+          this.submit();
+        });
+      });
+    </script>
+  </body>
 </html>
