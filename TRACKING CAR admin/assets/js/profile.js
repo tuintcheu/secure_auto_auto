@@ -82,13 +82,16 @@ class ProfileManager {
     updateProfileDisplay() {
         const admin = this.adminData;
         // Informations principales
-        document.getElementById('displayName').textContent = admin.displayName || admin.email;
+        document.getElementById('firstName').textContent = admin.firstName || '-';
+        document.getElementById('lastName').textContent = admin.lastName || '-';
         document.getElementById('email').textContent = admin.email;
+        document.getElementById('matricule').textContent = admin.matricule || '-';
+        document.getElementById('lieuAffectation').textContent = admin.lieuAffectation || '-';
         document.getElementById('role').textContent = this.getRoleText(admin.role);
-        document.getElementById('legion').textContent = this.getLegionText(admin.legion);
 
         // Carte profil
-        const initials = (admin.displayName || admin.email || 'A')
+        const fullName = `${admin.firstName || ''} ${admin.lastName || ''}`.trim() || admin.displayName || admin.email || 'A';
+        const initials = fullName
             .split(' ')
             .map(word => word.charAt(0))
             .join('')
@@ -96,7 +99,7 @@ class ProfileManager {
             .substring(0, 2);
 
         document.getElementById('profileInitials').textContent = initials;
-        document.getElementById('profileDisplayName').textContent = admin.displayName || 'Administrateur';
+        document.getElementById('profileDisplayName').textContent = fullName;
         document.getElementById('profileRole').textContent = this.getRoleText(admin.role);
         document.getElementById('profileLegion').textContent = this.getLegionText(admin.legion);
 
@@ -133,8 +136,11 @@ class ProfileManager {
             profileView.classList.add('hidden');
             profileForm.classList.remove('hidden');
             editBtn.classList.add('hidden');
-            document.getElementById('editDisplayName').value = this.adminData.displayName || '';
+            document.getElementById('editFirstName').value = this.adminData.firstName || '';
+            document.getElementById('editLastName').value = this.adminData.lastName || '';
             document.getElementById('editEmail').value = this.adminData.email || '';
+            document.getElementById('editMatricule').value = this.adminData.matricule || '';
+            document.getElementById('editLieuAffectation').value = this.adminData.lieuAffectation || '';
         } else {
             profileView.classList.remove('hidden');
             profileForm.classList.add('hidden');
@@ -144,10 +150,38 @@ class ProfileManager {
 
     async handleProfileUpdate(e) {
         e.preventDefault();
-        const newDisplayName = document.getElementById('editDisplayName').value.trim();
-        if (!newDisplayName) {
-            alert('Le nom complet est requis');
+        const firstName = document.getElementById('editFirstName').value.trim();
+        const lastName = document.getElementById('editLastName').value.trim();
+        const matricule = document.getElementById('editMatricule').value.trim();
+        const lieuAffectation = document.getElementById('editLieuAffectation').value.trim();
+
+        if (!firstName || !lastName) {
+            alert('Le prénom et le nom sont requis');
             return;
+        }
+        try {
+            // Mettre à jour dans admin_users
+            await updateDoc(doc(this.db, 'admin_users', this.adminData._docId), {
+                firstName: firstName,
+                lastName: lastName,
+                matricule: matricule,
+                lieuAffectation: lieuAffectation,
+                displayName: `${firstName} ${lastName}`,
+                updated_at: new Date()
+            });
+            this.adminData.firstName = firstName;
+            this.adminData.lastName = lastName;
+            this.adminData.matricule = matricule;
+            this.adminData.lieuAffectation = lieuAffectation;
+            this.adminData.displayName = `${firstName} ${lastName}`;
+            this.updateProfileDisplay();
+            this.toggleEditMode(false);
+            alert('Profil mis à jour avec succès');
+        } catch (error) {
+            console.error('Erreur mise à jour profil:', error);
+            alert('Erreur lors de la mise à jour');
+        }
+    }
         }
         try {
             // Mettre à jour dans admin_users
