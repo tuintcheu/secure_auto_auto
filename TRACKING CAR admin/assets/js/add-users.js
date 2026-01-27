@@ -107,21 +107,24 @@ class AddUsersManager {
             const lastName = document.getElementById('lastName').value.trim();
             const matricule = document.getElementById('matricule').value.trim();
             const lieuAffectation = document.getElementById('lieuAffectation').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
 
-            if (!firstName || !lastName) {
-                throw new Error('Le prénom et le nom sont requis');
+            if (!firstName || !lastName || !matricule || !lieuAffectation) {
+                throw new Error('Tous les champs sont requis');
             }
 
             // Vérifier si l'utilisateur existe déjà
-            if (email) {
-                const existing = await getDocs(
-                    query(collection(this.db, 'approved_users'), where('email', '==', email))
-                );
-                if (!existing.empty) {
-                    throw new Error('Cet email est déjà enregistré');
-                }
+            const existing = await getDocs(
+                query(collection(this.db, 'approved_users'), 
+                    where('matricule', '==', matricule))
+            );
+            if (!existing.empty) {
+                throw new Error('Cet utilisateur existe déjà (matricule déjà enregistré)');
+            }
+
+            // Récupérer l'admin connecté
+            const admin = window.trackingCarAuth.getCurrentAdmin();
+            if (!admin) {
+                throw new Error('Vous devez être connecté pour ajouter un utilisateur');
             }
 
             // Ajouter l'utilisateur à la collection approved_users
@@ -130,11 +133,9 @@ class AddUsersManager {
                 lastName,
                 matricule,
                 lieuAffectation,
-                email: email || null,
-                phone: phone || null,
                 displayName: `${firstName} ${lastName}`,
                 createdAt: Timestamp.now(),
-                createdBy: window.trackingCarAuth.getCurrentUser().uid,
+                createdBy: admin.uid || admin.email,
                 status: 'approved',
                 active: true
             });
@@ -166,9 +167,7 @@ class AddUsersManager {
                     firstName: row[0]?.toString().trim() || '',
                     lastName: row[1]?.toString().trim() || '',
                     matricule: row[2]?.toString().trim() || '',
-                    lieuAffectation: row[3]?.toString().trim() || '',
-                    email: row[4]?.toString().trim() || '',
-                    phone: row[5]?.toString().trim() || ''
+                    lieuAffectation: row[3]?.toString().trim() || ''
                 }));
 
                 if (this.excelData.length === 0) {
@@ -216,26 +215,29 @@ class AddUsersManager {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Import en cours...';
 
         try {
+            const admin = window.trackingCarAuth.getCurrentAdmin();
+            if (!admin) {
+                throw new Error('Vous devez être connecté pour importer');
+            }
+
             const batch = writeBatch(this.db);
             let successCount = 0;
             let errorCount = 0;
 
             for (const user of this.excelData) {
-                if (!user.firstName || !user.lastName) {
+                if (!user.firstName || !user.lastName || !user.matricule || !user.lieuAffectation) {
                     errorCount++;
                     continue;
                 }
 
                 try {
                     // Vérifier si l'utilisateur existe déjà
-                    if (user.email) {
-                        const existing = await getDocs(
-                            query(collection(this.db, 'approved_users'), where('email', '==', user.email))
-                        );
-                        if (!existing.empty) {
-                            errorCount++;
-                            continue;
-                        }
+                    const existing = await getDocs(
+                        query(collection(this.db, 'approved_users'), where('matricule', '==', user.matricule))
+                    );
+                    if (!existing.empty) {
+                        errorCount++;
+                        continue;
                     }
 
                     // Ajouter le document
@@ -245,11 +247,9 @@ class AddUsersManager {
                         lastName: user.lastName,
                         matricule: user.matricule,
                         lieuAffectation: user.lieuAffectation,
-                        email: user.email || null,
-                        phone: user.phone || null,
                         displayName: `${user.firstName} ${user.lastName}`,
                         createdAt: Timestamp.now(),
-                        createdBy: window.trackingCarAuth.getCurrentUser().uid,
+                        createdBy: admin.uid || admin.email,
                         status: 'approved',
                         active: true
                     });
