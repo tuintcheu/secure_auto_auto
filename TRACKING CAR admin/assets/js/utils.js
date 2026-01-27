@@ -291,6 +291,65 @@ class TrackingCarUtils {
         };
         return text.replace(/[&<>"']/g, (m) => map[m]);
     }
+
+    // Vérifier si un utilisateur est approuvé pour l'app mobile
+    static async isUserApproved(userIdentifier) {
+        try {
+            if (!window.firebaseDb) {
+                console.warn('Firebase DB non disponible');
+                return false;
+            }
+
+            const { collection, getDocs, query, where } = await import(
+                'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
+            );
+
+            // Chercher par email ou prénom+nom
+            let q;
+            if (userIdentifier.includes('@')) {
+                q = query(collection(window.firebaseDb, 'approved_users'), where('email', '==', userIdentifier));
+            } else {
+                // Vérifier avec prénom et nom
+                q = query(collection(window.firebaseDb, 'approved_users'), where('displayName', '==', userIdentifier));
+            }
+
+            const snapshot = await getDocs(q);
+            return !snapshot.empty && snapshot.docs[0].data().active === true;
+        } catch (error) {
+            console.error('Erreur vérification utilisateur approuvé:', error);
+            return false;
+        }
+    }
+
+    // Récupérer les infos d'un utilisateur approuvé
+    static async getApprovedUserInfo(userIdentifier) {
+        try {
+            if (!window.firebaseDb) {
+                console.warn('Firebase DB non disponible');
+                return null;
+            }
+
+            const { collection, getDocs, query, where } = await import(
+                'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
+            );
+
+            let q;
+            if (userIdentifier.includes('@')) {
+                q = query(collection(window.firebaseDb, 'approved_users'), where('email', '==', userIdentifier));
+            } else {
+                q = query(collection(window.firebaseDb, 'approved_users'), where('displayName', '==', userIdentifier));
+            }
+
+            const snapshot = await getDocs(q);
+            if (!snapshot.empty) {
+                return snapshot.docs[0].data();
+            }
+            return null;
+        } catch (error) {
+            console.error('Erreur récupération utilisateur approuvé:', error);
+            return null;
+        }
+    }
       
 }
 

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKING CAR - Ajouter utilisateurs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex items-center ml-2">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-900">TRACKING CAR</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <div id="userName" class="text-sm font-medium text-gray-900">Admin</div>
+                                <div id="userRole" class="text-xs text-gray-500">Administrateur</div>
+                            </div>
+                        </button>
+                        
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                            <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30">
+        <nav class="mt-6 px-4">
+            <div class="space-y-2">
+                <a href="../dashboard.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Tableau de bord
+                </a>
+                
+                <a href="../vehicles/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-car mr-3 text-lg"></i>
+                    Véhicules volés
+                </a>
+                
+                <a href="../detections/list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-search mr-3 text-lg"></i>
+                    Détections mobiles
+                </a>
+                
+                <a href="list.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    Liste utilisateurs
+                </a>
+                
+                <a href="add.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                    <i class="fas fa-user-plus mr-3 text-lg"></i>
+                    Ajouter utilisateurs
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Ajouter utilisateurs</h1>
+                <p class="text-gray-600">Ajoutez des utilisateurs manuellement ou importez un fichier Excel</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulaire d'ajout manual -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Ajout manual -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">
+                            <i class="fas fa-user-plus mr-2"></i>Ajouter un utilisateur
+                        </h3>
+                        <form id="addUserForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Prénom *</label>
+                                    <input type="text" id="firstName" name="firstName" required class="form-input" placeholder="Ex: Léonce">
+                                </div>
+                                <div>
+                                    <label class="form-label">Nom *</label>
+                                    <input type="text" id="lastName" name="lastName" required class="form-input" placeholder="Ex: Pharel">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Matricule</label>
+                                    <input type="text" id="matricule" name="matricule" class="form-input" placeholder="Ex: 22v2343">
+                                </div>
+                                <div>
+                                    <label class="form-label">Lieu d'affectation</label>
+                                    <input type="text" id="lieuAffectation" name="lieuAffectation" class="form-input" placeholder="Ex: Yaoundé">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="Ex: user@example.com">
+                            </div>
+
+                            <div>
+                                <label class="form-label">Numéro de téléphone</label>
+                                <input type="tel" id="phone" name="phone" class="form-input" placeholder="Ex: +237XXXXXXXXX">
+                            </div>
+
+                            <div class="flex justify-end space-x-3">
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-redo mr-1"></i>Réinitialiser
+                                </button>
+                                <button type="submit" id="addUserBtn" class="btn btn-primary">
+                                    <i class="fas fa-check mr-1"></i>Ajouter utilisateur
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Import Excel -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">
+                            <i class="fas fa-file-excel mr-2 text-green-600"></i>Importer depuis Excel
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <p class="text-sm text-blue-800 mb-2">
+                                    <i class="fas fa-info-circle mr-2"></i>Format Excel attendu:
+                                </p>
+                                <ul class="text-xs text-blue-700 space-y-1 ml-6">
+                                    <li>• Colonne A: Prénom</li>
+                                    <li>• Colonne B: Nom</li>
+                                    <li>• Colonne C: Matricule</li>
+                                    <li>• Colonne D: Lieu d'affectation</li>
+                                    <li>• Colonne E: Email (optionnel)</li>
+                                    <li>• Colonne F: Téléphone (optionnel)</li>
+                                </ul>
+                            </div>
+
+                            <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
+                                <div class="text-center">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600 font-medium">Déposez votre fichier Excel ici</p>
+                                    <p class="text-sm text-gray-500">ou cliquez pour parcourir</p>
+                                </div>
+                                <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" class="hidden" />
+                            </div>
+
+                            <div id="excelPreview" class="hidden">
+                                <h4 class="font-semibold text-gray-900 mb-3">Aperçu des données</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm border-collapse">
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th class="border border-gray-300 px-3 py-2 text-left">Prénom</th>
+                                                <th class="border border-gray-300 px-3 py-2 text-left">Nom</th>
+                                                <th class="border border-gray-300 px-3 py-2 text-left">Matricule</th>
+                                                <th class="border border-gray-300 px-3 py-2 text-left">Lieu</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="excelTable">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-4 flex justify-end space-x-3">
+                                    <button type="button" id="cancelImportBtn" class="btn btn-secondary">
+                                        <i class="fas fa-times mr-1"></i>Annuler
+                                    </button>
+                                    <button type="button" id="confirmImportBtn" class="btn btn-success">
+                                        <i class="fas fa-upload mr-1"></i>Importer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats et infos -->
+                <div class="space-y-6">
+                    <!-- Stats -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">Statistiques</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Total utilisateurs</span>
+                                    <span id="totalUsersCount" class="font-semibold text-blue-600">0</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Utilisateurs approuvés</span>
+                                    <span id="approvedUsersCount" class="font-semibold text-green-600">0</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm text-gray-600">Ajoutés aujourd'hui</span>
+                                    <span id="todayUsersCount" class="font-semibold text-purple-600">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages de validation -->
+                    <div id="validationMessages" class="space-y-2">
+                        <!-- Les messages s'affichent ici -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des utilisateurs récemment ajoutés -->
+            <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Utilisateurs récemment ajoutés</h3>
+                <div id="recentUsersList" class="space-y-2">
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-inbox text-2xl mb-2"></i>
+                        <p>Aucun utilisateur ajouté</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+    <script type="module" src="../assets/js/utils.js"></script>
+    <script type="module" src="../assets/js/add-users.js"></script>
+</body>
+</html>
