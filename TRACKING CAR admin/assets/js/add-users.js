@@ -113,12 +113,22 @@ class AddUsersManager {
     });
 
     // Modals d'édition et suppression
-    document.getElementById("closeEditModalBtn")?.addEventListener("click", () => this.closeEditModal());
-    document.getElementById("cancelEditBtn")?.addEventListener("click", () => this.closeEditModal());
-    document.getElementById("saveEditBtn")?.addEventListener("click", () => this.saveEditUser());
+    document
+      .getElementById("closeEditModalBtn")
+      ?.addEventListener("click", () => this.closeEditModal());
+    document
+      .getElementById("cancelEditBtn")
+      ?.addEventListener("click", () => this.closeEditModal());
+    document
+      .getElementById("saveEditBtn")
+      ?.addEventListener("click", () => this.saveEditUser());
 
-    document.getElementById("cancelDeleteBtn")?.addEventListener("click", () => this.closeDeleteModal());
-    document.getElementById("confirmDeleteBtn")?.addEventListener("click", () => this.confirmDeleteUser());
+    document
+      .getElementById("cancelDeleteBtn")
+      ?.addEventListener("click", () => this.closeDeleteModal());
+    document
+      .getElementById("confirmDeleteBtn")
+      ?.addEventListener("click", () => this.confirmDeleteUser());
   }
 
   closeEditModal() {
@@ -142,20 +152,25 @@ class AddUsersManager {
 
   openDeleteModal(userId, user) {
     this.currentDeletingUserId = userId;
-    document.getElementById("deleteUserInfo").textContent = `${user.firstName} ${user.lastName} (${user.matricule})`;
+    document.getElementById(
+      "deleteUserInfo"
+    ).textContent = `${user.firstName} ${user.lastName} (${user.matricule})`;
     document.getElementById("deleteConfirmModal").classList.remove("hidden");
   }
 
   async saveEditUser() {
     const btn = document.getElementById("saveEditBtn");
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Enregistrement...';
+    btn.innerHTML =
+      '<i class="fas fa-spinner fa-spin mr-1"></i>Enregistrement...';
 
     try {
       const firstName = document.getElementById("editFirstName").value.trim();
       const lastName = document.getElementById("editLastName").value.trim();
       const matricule = document.getElementById("editMatricule").value.trim();
-      const lieuAffectation = document.getElementById("editLieuAffectation").value.trim();
+      const lieuAffectation = document
+        .getElementById("editLieuAffectation")
+        .value.trim();
 
       if (!firstName || !lastName || !matricule || !lieuAffectation) {
         throw new Error("Tous les champs sont requis");
@@ -165,13 +180,16 @@ class AddUsersManager {
         "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
       );
 
-      await updateDoc(doc(this.db, "approved_users", this.currentEditingUserId), {
-        firstName,
-        lastName,
-        matricule,
-        lieuAffectation,
-        displayName: `${firstName} ${lastName}`,
-      });
+      await updateDoc(
+        doc(this.db, "approved_users", this.currentEditingUserId),
+        {
+          firstName,
+          lastName,
+          matricule,
+          lieuAffectation,
+          displayName: `${firstName} ${lastName}`,
+        }
+      );
 
       this.showNotification("Utilisateur modifié avec succès", "success");
       this.closeEditModal();
@@ -180,7 +198,10 @@ class AddUsersManager {
       await this.loadRecentUsers();
     } catch (error) {
       console.error("Erreur:", error);
-      this.showNotification(error.message || "Erreur lors de la modification", "error");
+      this.showNotification(
+        error.message || "Erreur lors de la modification",
+        "error"
+      );
     } finally {
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-save mr-1"></i>Enregistrer';
@@ -197,7 +218,9 @@ class AddUsersManager {
         "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
       );
 
-      await deleteDoc(doc(this.db, "approved_users", this.currentDeletingUserId));
+      await deleteDoc(
+        doc(this.db, "approved_users", this.currentDeletingUserId)
+      );
 
       this.showNotification("Utilisateur supprimé avec succès", "success");
       this.closeDeleteModal();
@@ -226,8 +249,10 @@ class AddUsersManager {
       });
 
       users.sort((a, b) => {
-        const timeA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
-        const timeB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
+        const timeA =
+          a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
+        const timeB =
+          b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
         return timeB - timeA;
       });
 
@@ -244,15 +269,23 @@ class AddUsersManager {
         return;
       }
 
-      container.innerHTML = users.map((user) => `
+      container.innerHTML = users
+        .map(
+          (user) => `
         <tr class="hover:bg-gray-50">
           <td class="px-4 py-3">${user.firstName}</td>
           <td class="px-4 py-3">${user.lastName}</td>
-          <td class="px-4 py-3"><span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">${user.matricule}</span></td>
+          <td class="px-4 py-3"><span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">${
+            user.matricule
+          }</span></td>
           <td class="px-4 py-3">${user.lieuAffectation}</td>
           <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded text-xs font-medium ${user.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-              ${user.active ? 'Actif' : 'Inactif'}
+            <span class="px-2 py-1 rounded text-xs font-medium ${
+              user.active
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
+            }">
+              ${user.active ? "Actif" : "Inactif"}
             </span>
           </td>
           <td class="px-4 py-3 text-center space-x-2">
@@ -270,10 +303,12 @@ class AddUsersManager {
             </button>
           </td>
         </tr>
-      `).join("");
+      `
+        )
+        .join("");
 
       // Ajouter les event listeners
-      document.querySelectorAll(".btn-edit").forEach(btn => {
+      document.querySelectorAll(".btn-edit").forEach((btn) => {
         btn.addEventListener("click", () => {
           const userId = btn.getAttribute("data-user-id");
           const user = this.usersMap.get(userId);
@@ -281,7 +316,7 @@ class AddUsersManager {
         });
       });
 
-      document.querySelectorAll(".btn-delete").forEach(btn => {
+      document.querySelectorAll(".btn-delete").forEach((btn) => {
         btn.addEventListener("click", () => {
           const userId = btn.getAttribute("data-user-id");
           const user = this.usersMap.get(userId);
