@@ -320,10 +320,11 @@
                   id="vehicleLicensePlate"
                   name="licensePlate"
                   required
+                  maxlength="7"
                   class="form-input"
-                  placeholder="Plaque d'immatriculation"
+                  placeholder="7 caractères (ex: ABC1234)"
                 />
-                <small class="text-gray-500">Format: AA1234BB</small>
+                <small class="text-gray-500">Exactement 7 caractères alphanumériques</small>
               </div>
 
               <div class="form-group">
@@ -939,12 +940,17 @@
         form.addEventListener('submit', function(e) {
           e.preventDefault();
           
-          // Valider le format de la plaque d'immatriculation si le champ existe
+          // Valider l'immatriculation (exactement 7 caractères) si le champ existe
           if (licensePlateInput) {
-            const licensePlate = licensePlateInput.value;
-            const licensePlateRegex = /^[A-Z]{2}[0-9]{4}[A-Z]{2}$/;
+            const licensePlate = licensePlateInput.value.trim();
+            if (licensePlate.length !== 7) {
+              alert('L\'immatriculation doit contenir exactement 7 caractères alphanumériques.');
+              licensePlateInput.focus();
+              return false;
+            }
+            const licensePlateRegex = /^[A-Z0-9]{7}$/;
             if (!licensePlateRegex.test(licensePlate)) {
-              alert('Le format de la plaque d\'immatriculation est invalide. Format attendu: AA1234BB');
+              alert('L\'immatriculation ne doit contenir que des lettres et des chiffres.');
               licensePlateInput.focus();
               return false;
             }
