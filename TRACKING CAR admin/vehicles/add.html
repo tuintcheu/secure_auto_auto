@@ -148,14 +148,15 @@
           <h1 class="text-2xl font-bold text-gray-900 mb-2">
             Enregistrer un véhicule volé
           </h1>
-
         </div>
 
         <!-- Formulaire -->
         <form id="vehicleForm" class="space-y-6">
           <!-- Informations sur le véhicule volé pour statistiques -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-white bg-blue-600 px-4 py-2 rounded-md mb-6 flex items-center">
+            <h3
+              class="text-lg font-semibold text-white bg-blue-600 px-4 py-2 rounded-md mb-6 flex items-center"
+            >
               <i class="fas fa-car-crash text-white mr-2"></i>
               Informations sur le véhicule volé
             </h3>
@@ -221,36 +222,80 @@
                 </label>
                 <div class="space-y-2">
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="voiture" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="voiture"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Voiture de tourisme</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="moto" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="moto"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Moto</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="camion" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="camion"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Camion</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="transport_commun" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="transport_commun"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Transport en commun</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="utilitaire" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="utilitaire"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Utilitaire</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="administratif" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="administratif"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Administratif</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="vehicleType" value="militaire" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="militaire"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Militaire/Police</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="checkbox" name="vehicleType" value="autre" class="form-checkbox">
-                    <input type="text" placeholder="Autre (préciser)" class="form-input ml-2 w-40">
+                    <input
+                      type="checkbox"
+                      name="vehicleType"
+                      value="autre"
+                      class="form-checkbox"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Autre (préciser)"
+                      class="form-input ml-2 w-40"
+                    />
                   </label>
                 </div>
               </div>
@@ -324,7 +369,9 @@
                   class="form-input"
                   placeholder="7 caractères (ex: ABC1234)"
                 />
-                <small class="text-gray-500">Exactement 7 caractères alphanumériques</small>
+                <small class="text-gray-500"
+                  >Exactement 7 caractères alphanumériques</small
+                >
               </div>
 
               <div class="form-group">
@@ -340,7 +387,9 @@
                   placeholder="17 caractères"
                   maxlength="17"
                 />
-                <small class="text-gray-500">17 caractères alphanumériques</small>
+                <small class="text-gray-500"
+                  >17 caractères alphanumériques</small
+                >
               </div>
 
               <div class="form-group">
@@ -374,12 +423,7 @@
                 <label for="legion" class="form-label">
                   <i class="fas fa-map-marked-alt mr-1"></i>Légion responsable *
                 </label>
-                <select
-                  id="legion"
-                  name="legion"
-                  class="form-select"
-                  required
-                >
+                <select id="legion" name="legion" class="form-select" required>
                   <option value="">Sélectionnez une légion</option>
                   <option value="l1">CENTRE</option>
                   <option value="l2">LITTORAL</option>
@@ -401,15 +445,31 @@
                 </label>
                 <div class="space-x-4">
                   <label class="inline-flex items-center">
-                    <input type="radio" name="zoneType" value="urbaine" class="form-radio" required>
+                    <input
+                      type="radio"
+                      name="zoneType"
+                      value="urbaine"
+                      class="form-radio"
+                      required
+                    />
                     <span class="ml-2">Urbaine</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="radio" name="zoneType" value="periurbaine" class="form-radio">
+                    <input
+                      type="radio"
+                      name="zoneType"
+                      value="periurbaine"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Périurbaine</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="radio" name="zoneType" value="rurale" class="form-radio">
+                    <input
+                      type="radio"
+                      name="zoneType"
+                      value="rurale"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Rurale</span>
                   </label>
                 </div>
@@ -421,11 +481,21 @@
                 </label>
                 <div class="space-x-4">
                   <label class="inline-flex items-center">
-                    <input type="radio" name="visibility" value="bien_eclaire" class="form-radio">
+                    <input
+                      type="radio"
+                      name="visibility"
+                      value="bien_eclaire"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Bien éclairé</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="radio" name="visibility" value="mal_eclaire" class="form-radio">
+                    <input
+                      type="radio"
+                      name="visibility"
+                      value="mal_eclaire"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Mal éclairé</span>
                   </label>
                 </div>
@@ -437,11 +507,21 @@
                 </label>
                 <div class="space-x-4">
                   <label class="inline-flex items-center">
-                    <input type="radio" name="antitheft_present" value="present" class="form-radio">
+                    <input
+                      type="radio"
+                      name="antitheft_present"
+                      value="present"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Présent</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="radio" name="antitheft_present" value="absent" class="form-radio">
+                    <input
+                      type="radio"
+                      name="antitheft_present"
+                      value="absent"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Absent</span>
                   </label>
                 </div>
@@ -453,19 +533,39 @@
                 </label>
                 <div class="space-y-2">
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="antitheftType" value="mecanique" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="antitheftType"
+                      value="mecanique"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Mécanique</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="antitheftType" value="electronique" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="antitheftType"
+                      value="electronique"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Électronique</span>
                   </label>
                   <label class="inline-flex items-center mr-4">
-                    <input type="checkbox" name="antitheftType" value="gps" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="antitheftType"
+                      value="gps"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">GPS</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="checkbox" name="antitheftType" value="aucun" class="form-checkbox">
+                    <input
+                      type="checkbox"
+                      name="antitheftType"
+                      value="aucun"
+                      class="form-checkbox"
+                    />
                     <span class="ml-2">Aucun</span>
                   </label>
                 </div>
@@ -477,11 +577,22 @@
                 </label>
                 <div class="space-x-4">
                   <label class="inline-flex items-center">
-                    <input type="radio" name="found" value="oui" class="form-radio">
+                    <input
+                      type="radio"
+                      name="found"
+                      value="oui"
+                      class="form-radio"
+                    />
                     <span class="ml-2">Oui</span>
                   </label>
                   <label class="inline-flex items-center">
-                    <input type="radio" name="found" value="non" class="form-radio" checked>
+                    <input
+                      type="radio"
+                      name="found"
+                      value="non"
+                      class="form-radio"
+                      checked
+                    />
                     <span class="ml-2">Non</span>
                   </label>
                 </div>
@@ -542,9 +653,14 @@
               </div>
 
               <!-- Informations sur le propriétaire -->
-              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
-                <h4 class="text-md font-semibold text-white bg-green-600 px-4 py-2 rounded-md mb-4">
-                  <i class="fas fa-user-tie text-white mr-2"></i>Informations sur le propriétaire
+              <div
+                class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200"
+              >
+                <h4
+                  class="text-md font-semibold text-white bg-green-600 px-4 py-2 rounded-md mb-4"
+                >
+                  <i class="fas fa-user-tie text-white mr-2"></i>Informations
+                  sur le propriétaire
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="form-group">
@@ -645,14 +761,20 @@
               </div>
 
               <!-- Informations sur le vol -->
-              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
-                <h4 class="text-md font-semibold text-white bg-red-600 px-4 py-2 rounded-md mb-4">
-                  <i class="fas fa-exclamation-triangle text-white mr-2"></i>Informations sur le vol
+              <div
+                class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200"
+              >
+                <h4
+                  class="text-md font-semibold text-white bg-red-600 px-4 py-2 rounded-md mb-4"
+                >
+                  <i class="fas fa-exclamation-triangle text-white mr-2"></i
+                  >Informations sur le vol
                 </h4>
                 <div class="grid grid-cols-1 gap-6">
                   <div class="form-group">
                     <label for="theftCircumstances" class="form-label">
-                      <i class="fas fa-clipboard-list mr-1"></i>Circonstances du vol
+                      <i class="fas fa-clipboard-list mr-1"></i>Circonstances du
+                      vol
                     </label>
                     <textarea
                       id="theftCircumstances"
@@ -691,8 +813,12 @@
               </div>
 
               <!-- Espace agent -->
-              <div class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200">
-                <h4 class="text-md font-semibold text-white bg-purple-600 px-4 py-2 rounded-md mb-4">
+              <div
+                class="form-group md:col-span-2 mt-6 pt-6 border-t border-gray-200"
+              >
+                <h4
+                  class="text-md font-semibold text-white bg-purple-600 px-4 py-2 rounded-md mb-4"
+                >
                   <i class="fas fa-user-shield text-white mr-2"></i>Espace agent
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -712,7 +838,8 @@
 
                   <div class="form-group">
                     <label for="registrationDate" class="form-label">
-                      <i class="far fa-calendar-alt mr-1"></i>Date d'enregistrement *
+                      <i class="far fa-calendar-alt mr-1"></i>Date
+                      d'enregistrement *
                     </label>
                     <input
                       type="date"
@@ -726,7 +853,8 @@
 
                   <div class="form-group">
                     <label for="caseStatus" class="form-label">
-                      <i class="fas fa-clipboard-check mr-1"></i>Statut du dossier *
+                      <i class="fas fa-clipboard-check mr-1"></i>Statut du
+                      dossier *
                     </label>
                     <select
                       id="caseStatus"
@@ -808,11 +936,8 @@
                   placeholder="ex: Corolla, Camry..."
                 />
               </div>
-
             </div>
           </div>
-
-
 
           <!-- Actions -->
           <div class="flex flex-col sm:flex-row gap-4 justify-end">
@@ -886,97 +1011,110 @@
     <script type="module" src="../assets/js/vehicles.js"></script>
     <script>
       // Définir la date d'enregistrement à aujourd'hui par défaut
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         // Définir la date d'enregistrement à aujourd'hui
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('registrationDate').value = today;
-        
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("registrationDate").value = today;
+
         // Gérer l'état des champs en fonction du statut "Véhicule retrouvé"
         const foundRadios = document.querySelectorAll('input[name="found"]');
-        const foundDateInput = document.getElementById('foundDate');
-        const foundConditionInput = document.getElementById('foundCondition');
-        const foundDelayInput = document.getElementById('foundDelay');
-        
+        const foundDateInput = document.getElementById("foundDate");
+        const foundConditionInput = document.getElementById("foundCondition");
+        const foundDelayInput = document.getElementById("foundDelay");
+
         function toggleFoundFields() {
-          const isFound = document.querySelector('input[name="found"]:checked').value === 'oui';
-          
+          const isFound =
+            document.querySelector('input[name="found"]:checked').value ===
+            "oui";
+
           foundDateInput.disabled = !isFound;
           foundConditionInput.disabled = !isFound;
           foundDelayInput.disabled = !isFound;
-          
+
           if (!isFound) {
-            foundDateInput.value = '';
-            foundConditionInput.value = '';
-            foundDelayInput.value = '';
+            foundDateInput.value = "";
+            foundConditionInput.value = "";
+            foundDelayInput.value = "";
           }
         }
-        
+
         // Écouter les changements sur les boutons radio "Véhicule retrouvé"
-        foundRadios.forEach(radio => {
-          radio.addEventListener('change', toggleFoundFields);
+        foundRadios.forEach((radio) => {
+          radio.addEventListener("change", toggleFoundFields);
         });
-        
+
         // Initialiser l'état des champs
         toggleFoundFields();
-        
+
         // Valider le numéro de châssis (17 caractères alphanumériques)
-        const chassisInput = document.getElementById('vehicleChassisNumber');
+        const chassisInput = document.getElementById("vehicleChassisNumber");
         if (chassisInput) {
-          chassisInput.addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          chassisInput.addEventListener("input", function (e) {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
           });
         }
-        
+
         // Valider la plaque d'immatriculation (format AA1234BB)
-        const licensePlateInput = document.getElementById('vehicleLicensePlate');
+        const licensePlateInput = document.getElementById(
+          "vehicleLicensePlate"
+        );
         if (licensePlateInput) {
-          licensePlateInput.addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          licensePlateInput.addEventListener("input", function (e) {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
           });
         }
-        
+
         // Gérer la soumission du formulaire
-        const form = document.getElementById('vehicleForm');
-        form.addEventListener('submit', function(e) {
+        const form = document.getElementById("vehicleForm");
+        form.addEventListener("submit", function (e) {
           e.preventDefault();
-          
+
           // Valider l'immatriculation (exactement 7 caractères) si le champ existe
           if (licensePlateInput) {
             const licensePlate = licensePlateInput.value.trim();
             if (licensePlate.length !== 7) {
-              alert('L\'immatriculation doit contenir exactement 7 caractères alphanumériques.');
+              alert(
+                "L'immatriculation doit contenir exactement 7 caractères alphanumériques."
+              );
               licensePlateInput.focus();
               return false;
             }
             const licensePlateRegex = /^[A-Z0-9]{7}$/;
             if (!licensePlateRegex.test(licensePlate)) {
-              alert('L\'immatriculation ne doit contenir que des lettres et des chiffres.');
+              alert(
+                "L'immatriculation ne doit contenir que des lettres et des chiffres."
+              );
               licensePlateInput.focus();
               return false;
             }
           }
-          
+
           // Valider le numéro de châssis (17 caractères) si le champ existe
           if (chassisInput && chassisInput.value.length !== 17) {
-            alert('Le numéro de châssis doit contenir exactement 17 caractères alphanumériques.');
+            alert(
+              "Le numéro de châssis doit contenir exactement 17 caractères alphanumériques."
+            );
             chassisInput.focus();
             return false;
           }
-          
+
           // Si le véhicule est marqué comme retrouvé, vérifier que les champs sont remplis
-          if (document.querySelector('input[name="found"]:checked').value === 'oui') {
+          if (
+            document.querySelector('input[name="found"]:checked').value ===
+            "oui"
+          ) {
             if (!foundDateInput.value) {
-              alert('Veuillez spécifier la date de retrouvaille.');
+              alert("Veuillez spécifier la date de retrouvaille.");
               foundDateInput.focus();
               return false;
             }
             if (!foundConditionInput.value) {
-              alert('Veuillez spécifier l\'état du véhicule retrouvé.');
+              alert("Veuillez spécifier l'état du véhicule retrouvé.");
               foundConditionInput.focus();
               return false;
             }
           }
-          
+
           // Si tout est valide, soumettre le formulaire
           this.submit();
         });
